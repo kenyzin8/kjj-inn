@@ -1,0 +1,91 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KJJ Inn is a hotel located in the heart of the city.">
+    <meta name="keywords" content="hotel, inn, kjj, kjj inn, city, heart of the city">
+    <meta name="author" content="KentJDev">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}"/>
+    <title>{% block title %}{% endblock %} | KJJ Inn</title>
+    <script src="{% static 'jQuery/jquery-3.6.4.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'daisy/css/full.min.css' %}"/>
+    <script src="{% static 'daisy/js/full.min.js' %}"></script>
+    <script>
+        function showError(message){
+            var errorModal = document.getElementById('error-modal')
+            errorModal.querySelector('.modal-body').textContent = message
+            errorModal.showModal()
+        }
+        function showSuccess(message){
+            var successModal = document.getElementById('success-modal')
+            successModal.querySelector('.modal-body').textContent = message
+            successModal.showModal()
+        }
+    </script>
+    <style>
+        html{
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1D232A; 
+        }
+         
+        ::-webkit-scrollbar-thumb {
+            background: #4e4e4e; 
+            border-radius: 1px;
+            padding: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4e4e4e; 
+            border-radius: 5px;
+        }
+
+        .no-scroll{
+            margin-right: 5px !important;
+            overflow-y: hidden;
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body class="no-scroll">
+    {% include 'loader.html' %}
+    {% include 'client/navbar.html' %}
+    <main class="m-5 flex flex-col">
+        <div class="min-h-screen">
+        {% block content %}
+        {% endblock %}
+        </div>
+    </main>
+    <dialog id="error-modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Oops, there was an error...</h3>
+            <p class="py-4 modal-body"></p>
+            <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">OK</button>
+            </form>
+            </div>
+        </div>
+    </dialog>
+    <dialog id="success-modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Success!</h3>
+            <p class="py-4 modal-body"></p>
+            <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">OK</button>
+            </form>
+            </div>
+        </div>
+    </dialog>
+    {% include 'footer.html' %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
