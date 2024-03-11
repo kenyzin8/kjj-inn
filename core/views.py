@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from .forms import LoginForm
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -24,7 +23,7 @@ def logout_user(request):
     logout(request)
     return redirect('login') 
 
-def login(request):
+def login_user(request):
     if(request.user.is_authenticated):
         return redirect('admin-dashboard')
 
