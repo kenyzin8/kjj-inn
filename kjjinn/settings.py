@@ -160,3 +160,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+LOGIN_REDIRECT_URL = 'admin-dashboard'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'

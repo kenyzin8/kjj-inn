@@ -21,11 +21,22 @@ class Fee(models.Model):
     def __str__(self):
         return f"{self.amount}"
 
+class RoomType(models.Model):
+    name = models.CharField(max_length=100)
+    fee = models.ManyToManyField(Fee, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
 class Room(models.Model):
     room_number = models.IntegerField()
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
-    fee = models.ForeignKey(Fee, on_delete=models.CASCADE)
-    room_type = models.CharField(max_length=100)
+    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE)
+    good_for = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

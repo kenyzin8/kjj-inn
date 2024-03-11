@@ -1,0 +1,36 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" class="dark bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KJJ Inn is a hotel located in the heart of the city.">
+    <meta name="keywords" content="hotel, inn, kjj, kjj inn, city, heart of the city">
+    <meta name="author" content="KentJDev">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}"/>
+    <title>{% block title %}{% endblock %} | KJJ Inn</title>
+    <script src="{% static 'jQuery/jquery-3.6.4.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'flowbite/flowbite.min.css' %}">
+    <script src="{% static 'flowbite/flowbite.min.js' %}"></script>
+    <script src="{% static 'tailwind/tailwind.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block styles %}{% endblock %}
+</head>
+<body class="no-scroll">
+    {% include 'loader.html' %}
+    <main>
+        {% include 'admin-kjj/navbar.html' %}
+        {% include 'admin-kjj/sidebar.html' %}
+        <div class="p-4 sm:ml-64">
+            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14 text-white">
+                {% include 'admin-kjj/breadcrump.html' %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+    {% include 'admin-kjj/modal.html' %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

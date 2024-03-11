@@ -56,12 +56,9 @@
 </head>
 <body class="no-scroll">
     {% include 'loader.html' %}
-    {% include 'client/navbar.html' %}
-    <main class="flex flex-col">
-        <div class="min-h-screen">
+    <main>
         {% block content %}
         {% endblock %}
-        </div>
     </main>
     <dialog id="error-modal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
@@ -85,7 +82,6 @@
             </div>
         </div>
     </dialog>
-    {% include 'footer.html' %}
     {% block scripts %}{% endblock %}
 </body>
 </html>

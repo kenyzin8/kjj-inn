@@ -1,0 +1,116 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="my-5">
+    <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
+        <div class="mb-2">
+            <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                <span class="font-semibold">Manage Rooms</span>
+                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                    Browse existing rooms and manage them here.
+                </p>
+            </caption>
+        </div>
+        <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-800">
+            <div>
+                <button id="add-room-button" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
+                    <i class="fa-solid fa-plus mr-1"></i> Add Room
+                </button>
+            </div>
+            <label for="table-search" class="sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+                </div>
+                <input type="text" id="table-search" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for rooms">
+            </div>
+        </div>
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        #
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Room
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Type
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Good&nbsp;For
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Building
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th class="px-6 py-4">1</th>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        Room 31
+                    </th>
+                    <td class="px-6 py-4">
+                        Small
+                    </td>
+                    <td class="px-6 py-4">
+                        2 Persons
+                    </td>
+                    <td class="px-6 py-4">
+                        Building 1
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th class="px-6 py-4">2</th>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        Room 31
+                    </th>
+                    <td class="px-6 py-4">
+                        Small
+                    </td>
+                    <td class="px-6 py-4">
+                        2 Persons
+                    </td>
+                    <td class="px-6 py-4">
+                        Building 1
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th class="px-6 py-4">3</th>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        Room 31
+                    </th>
+                    <td class="px-6 py-4">
+                        Small
+                    </td>
+                    <td class="px-6 py-4">
+                        2 Persons
+                    </td>
+                    <td class="px-6 py-4">
+                        Building 1
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

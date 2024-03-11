@@ -1,0 +1,29 @@
+{% extends 'client/base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen cursor-default">
+    <form method="POST" class="max-w-sm mx-auto mb-20">
+        {% csrf_token %}
+        <div class="text-center mb-5 text-[3rem]">
+            <span class="text-center font-semibold text-[orange]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KJJ&nbsp;INN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+        
+        <div class="mb-5">
+            <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+            {{ form.username }}
+        </div>
+        <div class="mb-5">
+            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+            {{ form.password }}
+        </div>
+        <button type="submit" class="text-black w-full bg-blue-700 hover:bg-[#D18700] font-bold rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange]">Get Started</button>
+        {% if error_message %}
+        <div class="text-center mt-3">
+            <p class="text-[red] font-semibold text-xs">{{ error_message }}</p>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
