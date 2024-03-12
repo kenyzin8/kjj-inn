@@ -1,4 +1,6 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+
+<!DOCTYPE html>
 <html lang="en" class="dark bg-gray-900">
 <head>
     <meta charset="UTF-8">
@@ -10,12 +12,10 @@
     <title>{% block title %}{% endblock %} | KJJ Inn</title>
     <script src="{% static 'jQuery/jquery-3.6.4.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'flowbite/flowbite.min.css' %}">
-    <script src="{% static 'flowbite/flowbite.min.js' %}"></script>
-    <script src="{% static 'tailwind/tailwind.js' %}"></script>
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
-    <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
-    <script src="{% static 'js/base.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'select2/select2.css' %}">
+    <script src="{% static 'tailwind/tailwind.js' %}"></script>
     {% block styles %}{% endblock %}
 </head>
 <body class="no-scroll">
@@ -32,5 +32,9 @@
     </main>
     {% include 'admin-kjj/modal.html' %}
     {% block scripts %}{% endblock %}
+    <script src="{% static 'flowbite/flowbite.min.js' %}"></script>
+    <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
+    <script src="{% static 'select2/select2.js' %}"></script>
 </body>
 </html>

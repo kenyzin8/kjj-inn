@@ -10,6 +10,10 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Building"
+        verbose_name_plural = "Buildings"
+
 class Fee(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     hours = models.IntegerField()
@@ -21,6 +25,10 @@ class Fee(models.Model):
     def __str__(self):
         return f"{self.amount}"
 
+    class Meta:
+        verbose_name = "Fee"
+        verbose_name_plural = "Fees" 
+
 class RoomType(models.Model):
     name = models.CharField(max_length=100)
     fee = models.ManyToManyField(Fee, blank=True)
@@ -31,6 +39,10 @@ class RoomType(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Room Type"
+        verbose_name_plural = "Room Types"
 
 class Room(models.Model):
     room_number = models.IntegerField()
@@ -44,6 +56,17 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.building.name} - {self.room_number}"
+
+    def get_room(self):
+        return f"Room {self.room_number}"
+
+    def get_good_for(self):
+        plural = 's' if self.good_for > 1 else ''
+        return f'{self.good_for} Person{plural}'
+
+    class Meta:
+        verbose_name = "Room"
+        verbose_name_plural = "Rooms"
 
 class Customer(models.Model):
     alias = models.CharField(max_length=100, default="Anonymous")
@@ -59,3 +82,7 @@ class Customer(models.Model):
 
     def __str__(self):
         return f"{self.room.building.name} - {self.room.room_number} - {self.check_in_date} - {self.check_out_date}"
+
+    class Meta:
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
