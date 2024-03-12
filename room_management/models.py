@@ -10,6 +10,10 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+    def get_building(self):
+        nbsp = self.name.replace(' ', '&nbsp;')
+        return nbsp
+
     class Meta:
         verbose_name = "Building"
         verbose_name_plural = "Buildings"
@@ -23,7 +27,7 @@ class Fee(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.amount}"
+        return f"{self.hours} hours - {self.amount}"
 
     class Meta:
         verbose_name = "Fee"
@@ -58,11 +62,12 @@ class Room(models.Model):
         return f"{self.building.name} - {self.room_number}"
 
     def get_room(self):
-        return f"Room {self.room_number}"
+        return f"Room&nbsp;{self.room_number}"
 
     def get_good_for(self):
         plural = 's' if self.good_for > 1 else ''
-        return f'{self.good_for} Person{plural}'
+        a = f'{self.good_for}&nbsp;Person{plural}'
+        return a
 
     class Meta:
         verbose_name = "Room"
