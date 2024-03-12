@@ -65,7 +65,7 @@ class Room(models.Model):
         return f"Room&nbsp;{self.room_number}"
 
     def get_good_for(self):
-        plural = 's' if self.good_for > 1 else ''
+        plural = 's' if int(self.good_for) > 1 else ''
         a = f'{self.good_for}&nbsp;Person{plural}'
         return a
 

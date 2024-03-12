@@ -1,13 +1,45 @@
-function showError(message){
-    var errorModal = document.getElementById('error-modal')
-    errorModal.querySelector('.modal-body').textContent = message
-    errorModal.showModal()
+let errorTimeoutId;
+let successTimeoutId;
+
+function showError(message) {
+    if (errorTimeoutId) {
+        clearTimeout(errorTimeoutId);
+    }
+
+    $(".toast-error-message").text(message);
+    
+    if ($(".toast-error").is(":hidden")) {
+        $(".toast-error").fadeIn();
+        $(".toast-error").css('display', 'inline-flex');
+    } else {
+        $(".toast-error").css('display', 'inline-flex');
+    }
+    errorTimeoutId = setTimeout(function() {
+        $(".toast-error").fadeOut();
+    }, 5000);
 }
 
-function showSuccess(message){
-    var successModal = document.getElementById('success-modal')
-    successModal.querySelector('.modal-body').textContent = message
-    successModal.showModal()
+function showSuccess(message) {
+    if (successTimeoutId) {
+        clearTimeout(successTimeoutId);
+    }
+
+    $(".toast-success-message").text(message);
+
+    if ($(".toast-success").is(":hidden")) {
+        $(".toast-success").fadeIn();
+        $(".toast-success").css('display', 'inline-flex');
+    } else {
+        $(".toast-success").css('display', 'inline-flex');
+    }
+
+    successTimeoutId = setTimeout(function() {
+        $(".toast-success").fadeOut();
+    }, 5000);
+}
+
+function hideModal(element) {
+    element.find('.close-modal-button').click();
 }
 
 function toggleDropdown(element) {

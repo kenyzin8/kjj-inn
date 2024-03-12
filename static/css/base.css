@@ -25,3 +25,30 @@ html{
     margin-right: 5px !important;
     overflow-y: hidden;
 }
+
+.text-left{
+    text-align: left !important;
+}
+
+div:where(.swal2-icon).swal2-warning {
+    border-color: orange !important;
+    color: orange !important;
+}
+
+div:where(.swal2-container).swal2-center>.swal2-popup {
+    background: rgb(31 41 55/var(--tw-bg-opacity)) !important;
+    color: white !important;
+}
+
+.swal2-title{
+    font-weight: bold !important;
+}
+
+div:where(.swal2-container).swal2-backdrop-show, div:where(.swal2-container).swal2-noanimation {
+    background: rgba(17,24,39,.8) !important;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+    color: #232323 !important;
+    font-weight: 750 !important;
+}
