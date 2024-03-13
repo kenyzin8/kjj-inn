@@ -1,12 +1,90 @@
 {% extends 'admin-kjj/base.html' %}
 
+{% load static %}
+
 {% block title %}Dashboard{% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="{% static 'apexcharts/dist/apexcharts.css' %}">
+<script src="{% static 'apexcharts/dist/apexcharts.js' %}"></script>
+<style>
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="my-5">
-    Dashboard
+    <div id="chart">
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    // https://apexcharts.com/javascript-chart-demos/line-charts/basic/
+    var options = {
+        series: [{
+            name: "Desktops",
+            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                fontSize: '12px',
+                fontFamily: 'Arial, sans-serif',
+                fontWeight: 'bold',
+                colors: ['black']
+            }
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        title: {
+            text: 'Sales Per Month',
+            align: 'left',
+            style: {
+                fontSize: '16px',
+                color: 'orange',
+                fontFamily: 'Arial, sans-serif'
+            }
+        },
+        grid: {
+            row: {
+                colors: ['orange', 'transparent'],
+                opacity: 1
+            },
+        },
+        xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            labels: {
+                style: {
+                    colors: ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange'],
+                    fontSize: '12px',
+                    fontFamily: 'Arial, sans-serif',
+                    fontWeight: 'bold'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: ['orange'],
+                    fontSize: '12px',
+                    fontFamily: 'Arial, sans-serif',
+                    fontWeight: 'bold'
+                }
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+</script>
 {% endblock %}
