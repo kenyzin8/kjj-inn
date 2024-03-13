@@ -1,12 +1,13 @@
 let errorTimeoutId;
 let successTimeoutId;
+var modals = [];
 
 function showError(message) {
     if (errorTimeoutId) {
         clearTimeout(errorTimeoutId);
     }
 
-    $(".toast-error-message").text(message);
+    $(".toast-error-message").html(message);
     
     if ($(".toast-error").is(":hidden")) {
         $(".toast-error").fadeIn();
@@ -24,7 +25,7 @@ function showSuccess(message) {
         clearTimeout(successTimeoutId);
     }
 
-    $(".toast-success-message").text(message);
+    $(".toast-success-message").html(message);
 
     if ($(".toast-success").is(":hidden")) {
         $(".toast-success").fadeIn();
@@ -38,10 +39,6 @@ function showSuccess(message) {
     }, 5000);
 }
 
-function hideModal(element) {
-    element.find('.close-modal-button').click();
-}
-
 function toggleDropdown(element) {
     var dropdown = document.getElementById(element.getAttribute('aria-controls'))
     if(dropdown.classList.contains('hidden')){
@@ -49,4 +46,64 @@ function toggleDropdown(element) {
     }else{
         element.querySelector('.arrow-indicator').classList.add('rotate-90')
     }
+}
+
+function initializeModal(modalId) {
+    var modalElement = document.querySelector(modalId);
+    if (!modalElement) {
+        console.error('Modal element not found:', modalId);
+        return null;
+    }
+
+    var modalOptions = {
+        placement: 'bottom-right',
+        backdrop: 'static',
+        backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+        closable: true,
+        onHide: function(e) {
+            
+        },
+        onShow: function(e) {
+
+        }
+    };
+
+    var modalInstanceOptions = {
+        id: modalElement.getAttribute('id'),
+        override: true
+    };
+
+    var modalInstance = new Modal(modalElement, modalOptions, modalInstanceOptions);
+
+    modals.push(modalInstance);
+
+    return modalInstance;
+}
+
+function closeModals() {
+    modals.forEach(modal => {
+        if(modal.isVisible()) {
+            modal.hide();
+        }
+    });
+}
+
+$(document).on('click', '.close-modal-button', function() {
+    closeModals();
+});
+
+function setupTableSearch(tableId, searchInputId) {
+    const searchInput = document.getElementById(searchInputId);
+    searchInput.addEventListener('keyup', function(e) {
+        const searchValue = e.target.value.toLowerCase().trim().replace(/\u00A0/g, ' ').replace(/,/g, '');
+        const tableRows = document.querySelectorAll(`#${tableId} tbody tr`);
+        tableRows.forEach(row => {
+            const rowText = row.innerText.toLowerCase().replace(/\u00A0/g, ' ').replace(/,/g, '');
+            if (rowText.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
 }

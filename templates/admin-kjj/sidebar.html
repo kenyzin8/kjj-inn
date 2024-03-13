@@ -23,12 +23,22 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-manage" data-collapse-toggle="dropdown-manage" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-gear text-gray-400"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Manage</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' %}rotate-90{% endif %} arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                    <li>
+                        <a href="{% url 'manage-fees' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-fees' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Fees
+                        </a>
+                    </li>
                     <li>
                         <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                            Hours
+                            Room Types
                         </a>
                     </li>
                     <li>

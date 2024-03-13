@@ -1,5 +1,7 @@
 {% extends 'admin-kjj/base.html' %}
 
+{% load static %}
+
 {% block title %}Manage Rooms{% endblock %}
 
 {% block styles %}
@@ -17,7 +19,7 @@
     </div>
     <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
         <div>
-            <button data-modal-target="add-room-modal" data-modal-toggle="add-room-modal" id="add-room-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+            <button id="add-room-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
                 <i class="fa-solid fa-plus mr-1"></i> Add Room
             </button>
         </div>
@@ -38,7 +40,13 @@
                             #
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Room
+                            <div class="flex items-center">
+                                Room
+                                <a href="#">
+                                    <i class="fa-solid fa-sort ms-1.5"></i>
+                                </a>
+                            </div>
+
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Type
@@ -50,35 +58,55 @@
                             Building
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Date Updated
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Action
                         </th>
                     </tr>
                 </thead>
                 <tbody class="rooms-tbody">
                     {% for room in rooms %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 room-row-{{ room.id }}">
                         <th class="px-6 py-4">
-                            {{ forloop.revcounter }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-index">
+                                {{ forloop.counter }}
+                            </span>
                         </th>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ room.get_room|safe }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-number">
+                                {{ room.get_room|safe }}
+                            </span>
                         </th>
                         <td class="px-6 py-4">
-                            {{ room.room_type.name }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-type-name">
+                                {{ room.room_type.name }}
+                            </span>
                         </td>
                         <td class="px-6 py-4">
-                            {{ room.get_good_for|safe }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] good-for">
+                                {{ room.get_good_for|safe }}
+                            </span>  
+                        </td>
+                        <td class="px-6 py-4">  
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] building-name">
+                                {{ room.building.get_building|safe }}
+                            </span>  
+                        </td>
+                        <td class="px-6 py-4">  
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] date-updated">
+                                {{ room.get_updated_at }}
+                            </span>  
                         </td>
                         <td class="px-6 py-4">
-                            {{ room.building.get_building|safe }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer" data-room-id="{{ room.id }}"">
-                                <i class="fa-solid fa-gear"></i>
-                            </a>
-                            <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-room" data-room-name="{{ room.get_room|safe }}" data-room-id="{{ room.id }}">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-room" data-room-id="{{ room.id }}" data-room-number="{{ room.room_number }}" data-building="{{ room.building.id }}" data-room-type="{{ room.room_type.id }}" data-good-for="{{ room.good_for }}">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-room" data-room-name="{{ room.get_room|safe }}" data-room-id="{{ room.id }}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </span>
                         </td>
                     </tr>
                     {% endfor %}
@@ -95,19 +123,19 @@
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     Add Room
                 </h3>
-                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="add-room-modal">
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-add-form">
+            <form class="p-4 md:p-5" id="form-add-room">
                 {% csrf_token %}
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2 sm:col-span-1">
                         <label for="room-number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Room Number
                         </label>
-                        <input type="number" name="room-number" id="room-number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="number" name="room-number" id="room-number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" min="0" required>
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="building" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -124,7 +152,7 @@
                         <label for="good-for" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Good For
                         </label>
-                        <input type="number" name="good-for" id="good-for" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="number" name="good-for" id="good-for" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" min="0" required>
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="room-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -165,142 +193,92 @@
     </div>
 </div> 
 
+<div id="update-room-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Update Room
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-update-form">
+                {% csrf_token %}
+                <input type="hidden" name="room-id" id="room-id-update" required>
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="room-number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Room Number
+                        </label>
+                        <input type="number" name="room-number" id="room-number-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" min="0" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="building" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Building
+                        </label>
+                        <select id="building-update" name="building" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:text-white dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                            <option value="" disabled selected>Select Building</option>
+                            {% for building in buildings %}
+                            <option value="{{ building.id }}">{{ building.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>  
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="good-for" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Good For
+                        </label>
+                        <input type="number" name="good-for" id="good-for-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" min="0" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="room-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Room Type
+                        </label>
+                        <select id="room-type-update" name="room-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:text-white dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                            <option value="" disabled selected>Select Room Type</option>
+                            {% for type in room_types%}
+                            <option value="{{ type.id }}">{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Update Room
+                </button>
+                <div class="mt-2 table-room-type-price-wrapper hidden">
+                    <div class="relative overflow-x-auto rounded-md shadow">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-900 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">
+                                        Hour
+                                    </th>
+                                    <th scope="col" class="px-6 py-3">
+                                        Fee
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="room-type-fee-tbody-update">
+                            </tbody>
+                        </table>
+                    </div>                    
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-$(document).ready(function() {
-
-});
-$(document).on('change', '#room-type', function() {
-    var room_type_id = $(this).val();
-    axios.get("{% url 'get-room-type-prices' %}", {
-        params: {
-            room_type_id: room_type_id
-        }
-    })
-    .then(function (response) {
-
-        if(response.data.success === false) {
-            $('.table-room-type-price-wrapper').hide();
-            return;
-        }
-
-        const data = response.data.data;
-        $('.room-type-fee-tbody').empty();
-        data.forEach(function (item) {
-            $('.room-type-fee-tbody').append(`
-                <tr class="odd:bg-white odd:dark:bg-gray-700 even:bg-gray-50 even:dark:bg-gray-900 border-b dark:border-gray-700">
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        ${item.hours}
-                    </td>
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        ${item.amount}
-                    </td>
-                </tr>
-            `);
-        });
-        $('.table-room-type-price-wrapper').show();
-    })
-    .catch(function (error) {
-        showError(error);
-    })
-});
-$(document).on('submit', '#form-add-form', function(e) {
-    e.preventDefault();
-
-    if($('#building').val() === null) {
-        showError('Please select a building');
-        return;
-    }
-    else if($('#room-type').val() === null) {
-        showError('Please select a room type');
-        return;
-    }
-
-    var form = $(this);
-    var data = form.serialize();
-    axios.post("{% url 'add-room' %}", data)
-        .then(function (response) {
-            if(response.data.success === true) {
-                const data = response.data.data;
-                $('.rooms-tbody').prepend(`
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th class="px-6 py-4">
-                            ${data.index}
-                        </th>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            ${data.room_number}
-                        </th>
-                        <td class="px-6 py-4">
-                            ${data.room_type}
-                        </td>
-                        <td class="px-6 py-4">
-                            ${data.good_for}
-                        </td>
-                        <td class="px-6 py-4">
-                            ${data.building}
-                        </td>
-                        <td class="px-6 py-4">
-                            <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer" data-tooltip-target="tooltip-update-room-{{ forloop.counter }}">
-                                <i class="fa-solid fa-gear"></i>
-                            </a>
-                            <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer" data-tooltip-target="tooltip-delete-room-{{ forloop.counter }}">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                `);
-                hideModal($('#add-room-modal'));
-                showSuccess('Room added successfully');
-            }
-            else{
-                showError(response.data.message);
-            }
-        })
-        .catch(function (error) {
-            showError(error);
-        })
-});
-$(document).on('click', '.button-delete-room', function() {
-    var room_name = $(this).data('room-name');
-    Swal.fire({
-        title: "Confirmation",
-        html: `<span class="font-semibold text-md">Are you sure you want to delete ${room_name}?</span>`,
-        icon: "warning",
-        showDenyButton: true,
-        confirmButtonColor: "orange",
-        confirmButtonTextColor: "black",
-        denyButtonColor: "#232323",
-        confirmButtonText: "Yes",
-        denyButtonText: `No`,
-        allowOutsideClick: false,
-        animation: true
-        }).then((result) => {
-        if (result.isConfirmed) {
-            var room_id = $(this).data('room-id');
-            axios.post("{% url 'delete-room' %}", {
-                    room_id: room_id
-                }, {
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}' 
-                    }
-                })
-                .then(function (response) {
-                    if(response.data.success === true) {
-                        showSuccess('Room deleted successfully');
-                        $(`.button-delete-room[data-room-id=${room_id}]`).closest('tr').remove();
-                    }
-                    else{
-                        showError(response.data.message);
-                    }
-                })
-                .catch(function (error) {
-                    showError(error);
-                })
-        }
-    });
-
-});
+var getRoomTypePricesURL = "{% url 'get-room-type-prices' %}";
+var addRoomURL = "{% url 'add-room' %}";
+var updateRoomURL = "{% url 'update-room' %}";
+var deleteRoomURL = "{% url 'delete-room' %}";
 </script>
+<script src="{% static 'js/rooms.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,187 @@
+{% extends 'admin-kjj/base.html' %}
+
+{% load static %}
+
+{% block title %}Manage Fees{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="my-5">
+    <div class="mb-2">
+        <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <span class="font-semibold">Manage Fees</span>
+            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                Browse existing fees and manage them here.
+            </p>
+        </caption>
+    </div>
+    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
+        <div>
+            <button id="add-fee-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+                <i class="fa-solid fa-plus mr-1"></i> Add Fee
+            </button>
+        </div>
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for rooms">
+        </div>
+    </div>
+    <div class="overflow-hidden">
+        <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
+            <table id="fee-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Hour
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Fee
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Room Type
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Date Updated
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="fees-tbody">
+                    {% for fee in fees %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-{{ fee.id }}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-index">
+                                {{ forloop.counter }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-hours">
+                                {{ fee.get_hours|safe }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-amount">
+                                {{ fee.get_amount|safe }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-type">
+                                {{ fee.get_room_type }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] date-updated">
+                                {{ fee.get_updated_at|safe }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-fee-id="{{ fee.id }}" data-fee-hours="{{ fee.hours }}" data-fee-amount="{{ fee.amount }}">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-fee-id="{{ fee.id }}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="add-fee-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Add Fee
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-add-fees">
+                {% csrf_token %}
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="add-fee" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Fee
+                        </label>
+                        <input type="number" step="0.01" min="1" name="fee" id="add-fee" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="add-hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Hours
+                        </label>
+                        <input type="number" min="1" name="hours" id="add-hours" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Submit New Fee
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+
+<div id="update-fee-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Update Fee
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-update-fees">
+                {% csrf_token %}
+                <input type="hidden" name="fee-id" id="fee-id-update" required>
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="add-fee" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Fee
+                        </label>
+                        <input type="number" step="0.01" min="1" name="fee" id="update-fee" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="add-hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Hours
+                        </label>
+                        <input type="number" min="1" name="hours" id="update-hours" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Update Fee
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+{% endblock %}
+
+{% block scripts %}
+<script>
+var addFeeURL = "{% url 'add-fee' %}";
+var updateFeeURL = "{% url 'update-fee' %}";
+</script>
+<script src="{% static 'js/fees.js' %}"></script>
+{% endblock %}

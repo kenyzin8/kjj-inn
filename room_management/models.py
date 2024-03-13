@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Building(models.Model):
     name = models.CharField(max_length=100)
@@ -28,6 +29,23 @@ class Fee(models.Model):
 
     def __str__(self):
         return f"{self.hours} hours - {self.amount}"
+
+    def get_updated_at(self):
+        self.updated_at = timezone.localtime(self.updated_at)
+        return self.updated_at.strftime("%B %d, %Y - %I:%M %p")
+
+    def get_hours(self):
+        plural = 's' if int(self.hours) > 1 else ''
+        a = f"{self.hours}&nbsp;Hour{plural}"
+        return a
+
+    def get_amount(self):
+        self.amount = f"{self.amount:,.2f}"
+        return f"₱&nbsp;{self.amount}"
+
+    def get_room_type(self):
+        room_types = self.roomtype_set.all() 
+        return ', '.join([rt.name for rt in room_types]) if room_types else 'N/A'
 
     class Meta:
         verbose_name = "Fee"
@@ -68,6 +86,13 @@ class Room(models.Model):
         plural = 's' if int(self.good_for) > 1 else ''
         a = f'{self.good_for}&nbsp;Person{plural}'
         return a
+
+    def get_updated_at(self):
+        self.updated_at = timezone.localtime(self.updated_at)
+        return self.updated_at.strftime("%B %d, %Y - %I:%M %p")
+
+    def get_updated_by(self):
+        return f'{self.updated_by.first_name}&nbsp;{self.updated_by.last_name}'
 
     class Meta:
         verbose_name = "Room"
