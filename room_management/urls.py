@@ -10,4 +10,7 @@ urlpatterns = [
    path('manage/fees/', views.manage_fee, name='manage-fees'),
    path('manage/fees/add/', views.add_fee, name='add-fee'),
    path('manage/fees/update/', views.update_fee, name='update-fee'),
+   path('manage/fees/delete/', views.delete_fee, name='delete-fee'),
+   path('manage/room-types/', views.manage_room_types, name='manage-room-types'),
+   path('manage/room-types/add/', views.add_room_type, name='add-room-type'),
 ]

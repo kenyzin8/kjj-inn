@@ -84,12 +84,12 @@
                                 {{ fee.get_updated_at|safe }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
                                 <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-fee-id="{{ fee.id }}" data-fee-hours="{{ fee.hours }}" data-fee-amount="{{ fee.amount }}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-fee-id="{{ fee.id }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-fee-id="{{ fee.id }}" data-fee-hours="{{ fee.get_hours|safe }}">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </span>
@@ -182,6 +182,7 @@
 <script>
 var addFeeURL = "{% url 'add-fee' %}";
 var updateFeeURL = "{% url 'update-fee' %}";
+var deleteFeeURL = "{% url 'delete-fee' %}";
 </script>
 <script src="{% static 'js/fees.js' %}"></script>
 {% endblock %}

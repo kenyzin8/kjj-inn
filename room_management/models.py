@@ -62,6 +62,14 @@ class RoomType(models.Model):
     def __str__(self):
         return self.name
 
+    def get_updated_at(self):
+        self.updated_at = timezone.localtime(self.updated_at)
+        return self.updated_at.strftime("%B %d, %Y - %I:%M %p")
+
+    def get_fees(self):
+        fees = self.fee.all()
+        return ', '.join([f"{f.hours} hours - ₱{f.amount:,.2f}" for f in fees]) if fees else 'N/A'
+
     class Meta:
         verbose_name = "Room Type"
         verbose_name_plural = "Room Types"
@@ -108,10 +116,17 @@ class Customer(models.Model):
 
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    price_at_check_in = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.room.building.name} - {self.room.room_number} - {self.check_in_date} - {self.check_out_date}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.price_at_check_in = self.room.room_type.fee.first().amount
+        super(Customer, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Customer"

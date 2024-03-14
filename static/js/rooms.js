@@ -173,7 +173,6 @@ $(document).on('click', '.button-delete-room', function(e) {
         icon: "warning",
         showDenyButton: true,
         confirmButtonColor: "orange",
-        confirmButtonTextColor: "black",
         denyButtonColor: "#232323",
         confirmButtonText: "Yes",
         denyButtonText: `No`,
@@ -184,11 +183,8 @@ $(document).on('click', '.button-delete-room', function(e) {
             var room_id = $(this).data('room-id');
             axios.post(deleteRoomURL, {
                     room_id: room_id
-                }, {
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}' 
-                    }
-                })
+                }, 
+                {headers: {'X-CSRFToken': getCSRFTokenFromCookies()}})
                 .then(function (response) {
                     if(response.data.success === true) {
                         showSuccess('Room deleted successfully');
@@ -199,7 +195,7 @@ $(document).on('click', '.button-delete-room', function(e) {
                     }
                 })
                 .catch(function (error) {
-                    showError(error);
+                    showError(error.message);
                 })
         }
     });

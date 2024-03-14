@@ -59,7 +59,7 @@ $(document).on('submit', '#form-add-fees', function(e){
             }
         })
         .catch(function (error) {
-            showError(error);
+            showError(error.message);
         })
 });
 
@@ -119,4 +119,41 @@ $(document).on('click', '.close-modal-button', function(e){
 $(document).on('click', '#add-fee-button', function(e){
     e.preventDefault();
     addModal.show();
+});
+
+$(document).on('click', '.button-delete-fee', function(e){
+    e.preventDefault();
+    const fee_hours = $(this).data('fee-hours');
+    Swal.fire({
+        title: "Confirmation",
+        html: `<span class="font-semibold text-md">Are you sure you want to delete ${fee_hours}?</span>`,
+        icon: "warning",
+        showDenyButton: true,
+        confirmButtonColor: "orange",
+        denyButtonColor: "#232323",
+        confirmButtonText: "Yes",
+        denyButtonText: `No`,
+        allowOutsideClick: false,
+        animation: true
+        }).then((result) => {
+        if (result.isConfirmed) {
+            const feeId = $(this).data('fee-id');
+            const feeRowSelector = `.fee-row-${feeId}`;
+            axios.post(deleteFeeURL, {id: feeId},
+                {headers: {'X-CSRFToken': getCSRFTokenFromCookies()}})
+                .then(function (response) {
+                    if(response.data.success === true) {
+                        $(feeRowSelector).remove();
+                        showSuccess(response.data.message);
+                    }
+                    else{
+                        showError(response.data.message);
+                    }
+                })
+                .catch(function (error) {
+                    showError(error.message);
+                });
+        }
+    });
+
 });

@@ -68,7 +68,7 @@
                 <tbody class="rooms-tbody">
                     {% for room in rooms %}
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 room-row-{{ room.id }}">
-                        <th class="px-6 py-4">
+                        <th class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-index">
                                 {{ forloop.counter }}
                             </span>
@@ -78,27 +78,27 @@
                                 {{ room.get_room|safe }}
                             </span>
                         </th>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-type-name">
                                 {{ room.room_type.name }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] good-for">
                                 {{ room.get_good_for|safe }}
                             </span>  
                         </td>
-                        <td class="px-6 py-4">  
+                        <td class="px-6 py-4 whitespace-nowrap">  
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] building-name">
                                 {{ room.building.get_building|safe }}
                             </span>  
                         </td>
-                        <td class="px-6 py-4">  
+                        <td class="px-6 py-4 whitespace-nowrap">  
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] date-updated">
                                 {{ room.get_updated_at }}
                             </span>  
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
                                 <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-room" data-room-id="{{ room.id }}" data-room-number="{{ room.room_number }}" data-building="{{ room.building.id }}" data-room-type="{{ room.room_type.id }}" data-good-for="{{ room.good_for }}">
                                     <i class="fa-solid fa-gear"></i>

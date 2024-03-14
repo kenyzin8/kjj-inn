@@ -107,3 +107,9 @@ function setupTableSearch(tableId, searchInputId) {
         });
     });
 }
+
+function getCSRFTokenFromCookies(){
+    const cookie = document.cookie;
+    const csrfToken = cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+    return csrfToken;
+}

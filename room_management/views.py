@@ -3,9 +3,10 @@ from django.http import JsonResponse
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 import json
-# login required
 from django.contrib.auth.decorators import login_required
+from core.decorators import staff_required
 
+@staff_required
 @login_required
 def manage_rooms(request):
     rooms = Room.objects.filter(is_active=True).order_by('-room_number')
@@ -18,6 +19,7 @@ def manage_rooms(request):
     }
     return render(request, 'manage/rooms.html', context)
 
+@staff_required
 @login_required
 def add_room(request):
     if request.method != 'POST':
@@ -65,6 +67,7 @@ def add_room(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
+@staff_required
 @login_required
 def get_room_type_prices(request):
     if request.method != 'GET':
@@ -85,6 +88,7 @@ def get_room_type_prices(request):
         })
     return JsonResponse({'success': True, 'data': data})
 
+@staff_required
 @login_required
 def delete_room(request):
     if request.method != 'POST':
@@ -101,6 +105,7 @@ def delete_room(request):
     room.save()
     return JsonResponse({'success': True})
 
+@staff_required
 @login_required
 def update_room(request):
     if request.method != 'POST':
@@ -159,6 +164,7 @@ def update_room(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
+@staff_required
 @login_required
 def manage_fee(request):
     fees = Fee.objects.filter(is_active=True).order_by('-created_at')
@@ -167,6 +173,7 @@ def manage_fee(request):
     }
     return render(request, 'manage/fees.html', context)
 
+@staff_required
 @login_required
 def add_fee(request):
     if request.method != 'POST':
@@ -205,6 +212,7 @@ def add_fee(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
+@staff_required
 @login_required
 def update_fee(request):
     if request.method != 'POST':
@@ -251,3 +259,75 @@ def update_fee(request):
         return JsonResponse({'success': True, 'message': 'Fee updated successfuly', 'data': data, 'unformatted_data': unformatted_data})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+@staff_required
+@login_required
+def delete_fee(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    data = json.loads(request.body)
+    fee_id = data.get('id')
+
+    if not fee_id:
+        return JsonResponse({'success': False, 'message': 'Invalid fee id'})
+
+    fee = Fee.objects.filter(is_active=True, id=fee_id).first()
+    fee.is_active = False
+    fee.save()
+    return JsonResponse({'success': True, 'message': 'Fee deleted successfuly'})
+
+@staff_required
+@login_required
+def manage_room_types(request):
+    room_types = RoomType.objects.filter(is_active=True).order_by('-created_at')
+    fees = Fee.objects.filter(is_active=True)
+    context = {
+        'room_types': room_types,
+        'fees': fees
+    }
+    return render(request, 'manage/room_types.html', context)
+
+@staff_required
+@login_required
+def add_room_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    name = request.POST.get('room-type')
+    fee_ids = request.POST.getlist('fees[]')
+    print(name, fee_ids)
+
+    if not name:
+        return JsonResponse({'success': False, 'message': 'Name is required'})
+    
+    if not fee_ids:
+        return JsonResponse({'success': False, 'message': 'At least one fee is required'})
+
+   
+    room_type = RoomType(name=name)
+    room_type.save()
+
+    for fee_id in fee_ids:
+        fee = Fee.objects.get(id=fee_id)
+        room_type.fee.add(fee)
+
+    data = {
+        'id': room_type.id,
+        'name': room_type.name,
+        'fees': [
+            {
+                'amount': fee.get_amount(),
+                'hours': fee.get_hours(),
+            }
+            for fee in room_type.fee.all()
+        ],
+    }
+
+    unformatted_data = {
+        'id': room_type.id,
+        'name': room_type.name,
+        'fees': fee_ids,
+    }
+    
+    return JsonResponse({'success': True, 'message': 'Room type added successfuly', 'data': data, 'unformatted_data': unformatted_data})
