@@ -115,10 +115,10 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-fee-id="{{ fee.id }}" data-fee-hours="{{ fee.hours }}" data-fee-amount="{{ fee.amount }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-room-type-id="{{ room_type.id }}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-fee-id="{{ fee.id }}" data-fee-hours="{{ fee.get_hours|safe }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-room-type-id="{{ room_type.id }}">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </span>
@@ -254,10 +254,10 @@ $(document).on('submit', '#form-add-room-types', function(e){
     axios.post("{% url 'add-room-type' %}", data)
         .then(function (response) {
             if(response.data.success === true) {
-                const _data = response.data;
-                console.log(_data)
+                const data = response.data;
+                console.log(data)
                 $(".room-types-tbody").prepend(`
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-${_data.data.id}">
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-${data.data.id}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-index">
                                 ${$('.room-types-tbody tr').length + 1}
@@ -265,18 +265,18 @@ $(document).on('submit', '#form-add-room-types', function(e){
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-hours">
-                                ${_data.data.name}
+                                ${data.data.name}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap room-type-fees-td-${_data.data.id}">
+                        <td class="px-6 py-4 whitespace-nowrap room-type-fees-td-${data.data.id}">
                             
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-room-type-id="${_data.data.id}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-room-type-id="${data.data.id}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-room-type-id="${_data.data.id}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-room-type-id="${data.data.id}">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </span>
@@ -284,8 +284,8 @@ $(document).on('submit', '#form-add-room-types', function(e){
                     </tr>
                 `);
 
-                _data.data.fees.forEach(fee => {
-                    $(`.room-type-fees-td-${_data.data.id}`).append(`
+                data.data.fees.forEach(fee => {
+                    $(`.room-type-fees-td-${data.data.id}`).append(`
                         <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-amount">
                             ${fee.hours} - ${fee.amount}
                         </span>

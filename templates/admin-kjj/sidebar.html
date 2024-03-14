@@ -47,6 +47,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                            Buildings
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url 'manage-rooms' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
                                                                 {% if current_url_name == 'manage-rooms' %}
                                                                     bg-[orange] text-black font-bold
@@ -54,11 +59,6 @@
                                                                     text-white hover:bg-gray-700
                                                                 {% endif %}">
                             Rooms
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-                            Buildings
                         </a>
                     </li>
                 </ul>
