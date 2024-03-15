@@ -95,30 +95,30 @@
                 </thead>
                 <tbody class="room-types-tbody">
                     {% for room_type in room_types %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-{{ fee.id }}">
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 room-type-row-{{ room_type.id }}">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-index">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-type-index">
                                 {{ forloop.counter }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-hours">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-type-name">
                                 {{ room_type.name }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap room-type-fees">
                             {% for fee in room_type.fee.all %}
-                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-amount">
+                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] ">
                                     {{ fee.get_hours|safe }} - {{ fee.get_amount|safe }} 
                                 </span>
                             {% endfor %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-room-type-id="{{ room_type.id }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-room-type" data-room-type-id="{{ room_type.id }}" data-room-type-name="{{ room_type.name }}" data-room-type-fee-ids="{{ room_type.fee_ids }}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-room-type-id="{{ room_type.id }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-room-type" data-room-type-id="{{ room_type.id }}" data-room-type-name="{{ room_type.name }}">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </span>
@@ -173,33 +173,33 @@
         <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Update Fee
+                    Add Room Type
                 </h3>
                 <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-update-fees">
+            <form class="p-4 md:p-5" id="form-update-room-types">
                 {% csrf_token %}
-                <input type="hidden" name="fee-id" id="fee-id-update" required>
+                <input type="hidden" id="room-type-id-update" name="room-type-id">
                 <div class="grid gap-4 mb-4 grid-cols-2">
-                    <div class="col-span-2 sm:col-span-1">
-                        <label for="update-fee" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Fee
-                        </label>
-                        <input type="number" step="0.01" min="1" name="fee" id="update-fee" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    <div class="col-span-2">
+                        <label for="room-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Room Type</label>
+                        <input type="text" name="room-type" id="room-type-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type room type name" required="">
                     </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label for="update-hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Hours
-                        </label>
-                        <input type="number" min="1" name="hours" id="update-hours" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    <div class="col-span-2">
+                        <label for="fees" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fees</label>
+                        <select name="fees[]" id="fees-update" multiple="multiple" style="width: 100%" class="fees" placeholder="Type product name" required="">
+                            {% for fee in fees %}
+                            <option value="{{ fee.id }}">{{ fee.hours }} Hours - ₱{{ fee.amount }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
                     <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
-                    Update Fee
+                    Submit New Room Type
                 </button>
             </form>
         </div>
@@ -209,110 +209,9 @@
 
 {% block scripts %}
 <script>
-var updateModal = null,
-    addModal = null;
-
-$(document).ready(function() {
-    setupTableSearch('room-type-table', 'table-search');
-    updateModal = initializeModal("#update-room-type-modal");
-    addModal = initializeModal("#add-room-type-modal");
-    
-    $(".fees").select2({
-        placeholder: "Select fees",
-        allowClear: true,
-    });
-
-    $(".select2-container").addClass("bg-gray-50");
-    $(".select2-container").addClass("border");
-    $(".select2-container").addClass("border-gray-300");
-    $(".select2-container").addClass("text-gray-900");
-    $(".select2-container").addClass("text-sm");
-    $(".select2-container").addClass("rounded-lg");
-    $(".select2-container").addClass("focus:ring-primary-600");
-    $(".select2-container").addClass("focus:border-primary-600");
-    $(".select2-container").addClass("block");
-    $(".select2-container").addClass("w-full");
-    $(".select2-container").addClass("p-1");
-    $(".select2-container").addClass("dark:bg-gray-600");
-    $(".select2-container").addClass("dark:border-gray-500");
-    $(".select2-container").addClass("dark:placeholder-gray-400");
-    $(".select2-container").addClass("dark:text-white");
-    $(".select2-container").addClass("dark:focus:ring-primary-500");
-    $(".select2-container").addClass("dark:focus:border-primary-500");
-    $(".select2-container").addClass("cursor-pointer");
-});
-
-$(document).on('click', '#add-room-type-button', function(e){
-    e.preventDefault();
-    addModal.show();
-});
-$(document).on('submit', '#form-add-room-types', function(e){
-    e.preventDefault();
-    
-    var form = $(this);
-    var data = form.serialize();
-    axios.post("{% url 'add-room-type' %}", data)
-        .then(function (response) {
-            if(response.data.success === true) {
-                const data = response.data;
-                console.log(data)
-                $(".room-types-tbody").prepend(`
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-${data.data.id}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-index">
-                                ${$('.room-types-tbody tr').length + 1}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-hours">
-                                ${data.data.name}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap room-type-fees-td-${data.data.id}">
-                            
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-fee" data-room-type-id="${data.data.id}">
-                                    <i class="fa-solid fa-gear"></i>
-                                </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-fee" data-room-type-id="${data.data.id}">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </span>
-                        </td>
-                    </tr>
-                `);
-
-                data.data.fees.forEach(fee => {
-                    $(`.room-type-fees-td-${data.data.id}`).append(`
-                        <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-amount">
-                            ${fee.hours} - ${fee.amount}
-                        </span>
-                    `);
-                });
-
-                closeModals();
-                showSuccess(response.data.message);
-            }
-            else{
-                closeModals();
-                showError(response.data.message);
-            }
-        })
-        .catch(function (error) {
-            showError(error.message);
-        });
-});
-
-$(document).on('click', '.close-modal-button', function(e){
-    e.preventDefault();
-    if(updateModal.isVisible()){
-        updateModal.hide();
-    }
-    else if(addModal.isVisible()){
-        addModal.hide();
-    }
-});
+const addRoomTypeURL = "{% url 'add-room-type' %}";
+const updateRoomTypeURL = "{% url 'update-room-type' %}";
+const deleteRoomTypeURL = "{% url 'delete-room-type' %}";
 </script>
+<script src="{% static 'js/room_types.js' %}"></script>
 {% endblock %}

@@ -8,6 +8,10 @@ urlpatterns = [
    path('dashboard/', views.dashboard, name='admin-dashboard'),
    path('login/', views.login_user, name='login'),
    path('logout/', views.logout_user, name='logout-page'),
+   path('user-management/', views.user_management, name='user-management'),
+   path('user-management/add-user/', views.add_user, name='add-user'),
+   path('user-management/update-user/', views.update_user, name='update-user'),
+   path('user-management/delete-user/', views.delete_user, name='delete-user'),
 ]
 
 if settings.DEBUG:

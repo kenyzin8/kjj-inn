@@ -275,10 +275,10 @@
 
 {% block scripts %}
 <script>
-var getRoomTypePricesURL = "{% url 'get-room-type-prices' %}";
-var addRoomURL = "{% url 'add-room' %}";
-var updateRoomURL = "{% url 'update-room' %}";
-var deleteRoomURL = "{% url 'delete-room' %}";
+const getRoomTypePricesURL = "{% url 'get-room-type-prices' %}";
+const addRoomURL = "{% url 'add-room' %}";
+const updateRoomURL = "{% url 'update-room' %}";
+const deleteRoomURL = "{% url 'delete-room' %}";
 </script>
 <script src="{% static 'js/rooms.js' %}"></script>
 {% endblock %}

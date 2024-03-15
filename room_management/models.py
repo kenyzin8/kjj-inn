@@ -15,6 +15,9 @@ class Building(models.Model):
         nbsp = self.name.replace(' ', '&nbsp;')
         return nbsp
 
+    def get_rooms(self):
+        return self.room_set.filter(is_active=True)
+
     class Meta:
         verbose_name = "Building"
         verbose_name_plural = "Buildings"

@@ -23,9 +23,9 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-manage" data-collapse-toggle="dropdown-manage" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-gear text-gray-400"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Manage</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' %}rotate-90{% endif %} arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
                     <li>
                         <a href="{% url 'manage-fees' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
                                                                 {% if current_url_name == 'manage-fees' %}
@@ -47,7 +47,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                        <a href="{% url 'manage-buildings' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-buildings' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
                             Buildings
                         </a>
                     </li>
@@ -64,14 +69,19 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <i class="fa-solid fa-users text-gray-400"></i>
-                <span class="ms-3">Users</span>
+                <a href="{% url 'user-management' %}" class="flex items-center p-2 rounded-md group 
+                                                            {% if current_url_name == 'user-management' %}
+                                                                bg-[orange] text-black font-bold
+                                                            {% else %}
+                                                                text-gray-900 text-white hover:bg-gray-700
+                                                            {% endif %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="ms-3">Users</span>
                 </a>
             </li>
             <li>
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-reports" data-collapse-toggle="dropdown-reports" onclick="toggleDropdown(this)">
-                    <i class="fa-solid fa-paperclip text-gray-400"></i>
+                    <i class="fa-solid fa-paperclip"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Reports</span>
                     <i class="fa-solid fa-chevron-down rotate-90 arrow-indicator"></i>
                 </button>

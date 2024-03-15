@@ -13,6 +13,81 @@
 
 {% block content %}
 <div class="my-5">
+	
+	<div class="w-full bg-gray-800 p-6 rounded-md mb-5 shoutbox-container">
+		<div class="mb-5">
+			<span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+				Shoutbox
+			</span>
+		</div>
+		<div class="messages-container">
+			<div class="flex items-start gap-2.5 mb-3">
+				<div class="flex flex-col w-full max-w-[90%] lg:max-w-[47%] leading-1.5 p-4 border-gray-200 bg-gray-100 dark:bg-gray-900 rounded-lg rounded-tl-none">
+					<div class="flex items-center space-x-2">
+						<span class="text-sm font-semibold text-gray-900 dark:text-white">Caryl Fernandez</span>
+						<span class="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
+					</div>
+					<p class="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
+						May shopee diri. Haha
+					</p>
+				</div>
+				<button id="dropDown-1" data-dropdown-toggle="dropDownDots-1" data-dropdown-placement="bottom-start" class="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 dark:focus:ring-gray-600" type="button">
+					<i class="fa-solid fa-ellipsis-vertical"></i>
+				</button>
+				<div id="dropDownDots-1" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
+					<ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropDown-1">
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reply</a>
+						</li>
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Copy</a>
+						</li>
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="flex items-start gap-2.5 mb-5 justify-end">
+				<button id="dropDown-2" data-dropdown-toggle="dropDownDots-2" data-dropdown-placement="bottom-start" class="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 dark:focus:ring-gray-600" type="button">
+					<i class="fa-solid fa-ellipsis-vertical"></i>
+				</button>
+				<div id="dropDownDots-2" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
+					<ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropDown-2">
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reply</a>
+						</li>
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Copy</a>
+						</li>
+						<li>
+							<a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+						</li>
+					</ul>
+				</div>
+				<div class="flex flex-col text-end w-full max-w-[90%] lg:max-w-[47%] leading-1.5 p-4 border-gray-200 bg-gray-100 dark:bg-gray-900 rounded-lg rounded-tr-none">
+					<div class="flex items-center space-x-2 justify-end">
+						<span class="text-sm font-semibold text-gray-900 dark:text-white">John Jamila</span>
+						<span class="text-sm font-normal text-gray-500 dark:text-gray-400">12:00</span>
+					</div>
+					<p class="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
+						Okay, wait lang. I-check ko lang.
+					</p>
+				</div>
+			</div>
+		</div>
+		<form id="shoutbox-input-form">
+			{% csrf_token %}
+			<div class="flex items-center gap-2.5">
+				<input type="text" class="w-full px-2.5 py-2.5 rounded-md bg-gray-900 dark:bg-gray-700 text-gray-900 dark:text-white border-0 focus:ring-0" placeholder="Type your message...">
+				<button class="flex items-center justify-center w-10 h-10 rounded-md bg-[orange] text-black hover:bg-[#D18700]" type="submit">
+					<i class="fa-solid fa-paper-plane"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+
+
     <div class="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
         <div class="flex justify-between">
             <div>
@@ -141,6 +216,10 @@ if (document.getElementById("area-chart") && typeof ApexCharts !== 'undefined') 
 	const chart = new ApexCharts(document.getElementById("area-chart"), options);
 	chart.render();
 }
+
+$(document).on('submit', '#shoutbox-input-form', function(e) {
+	e.preventDefault();
+});
 
 </script>
 {% endblock %}

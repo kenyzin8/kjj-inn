@@ -13,4 +13,10 @@ urlpatterns = [
    path('manage/fees/delete/', views.delete_fee, name='delete-fee'),
    path('manage/room-types/', views.manage_room_types, name='manage-room-types'),
    path('manage/room-types/add/', views.add_room_type, name='add-room-type'),
+   path('manage/room-types/update/', views.update_room_type, name='update-room-type'),
+   path('manage/room-types/delete/', views.delete_room_type, name='delete-room-type'),
+   path('manage/buildings/', views.manage_buildings, name='manage-buildings'),
+   path('manage/buildings/add/', views.add_building, name='add-building'),
+   path('manage/buildings/update/', views.update_building, name='update-building'),
+   path('manage/buildings/delete/', views.delete_building, name='delete-building'),
 ]

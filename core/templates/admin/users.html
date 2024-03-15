@@ -1,0 +1,252 @@
+{% extends 'admin-kjj/base.html' %}
+
+{% load static %}
+
+{% block title %}User Management{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="my-5">
+    <div class="mb-2">
+        <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <span class="font-semibold">User Management</span>
+            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                Browse existing users and manage them here.
+            </p>
+        </caption>
+    </div>
+    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
+        <div>
+            <button id="add-user-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+                <i class="fa-solid fa-plus mr-1"></i> Add User
+            </button>
+        </div>
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for rooms">
+        </div>
+    </div>
+    <div class="overflow-hidden">
+        <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
+            <table id="user-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Username
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Last Login
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Date Created
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Role
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="users-tbody">
+                    {% for user in users %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 user-row-{{ user.id }}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-index">
+                                {{ forloop.counter }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-name">
+                                {{ user.first_name }}{% if user.last_name %}&nbsp;{{ user.last_name }}{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-username">
+                                {{ user.username }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-last-login">
+                                {% if user.last_login %}
+                                    {{ user.last_login|date:"F j, Y - g:i A" }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-date-joined">
+                                {{ user.date_joined|date:"F j, Y - g:i A" }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] user-role">
+                                {% if user.is_superuser or user.is_staff %}
+                                    Admin
+                                {% else %}
+                                    User
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-user" data-user-id="{{ user.id }}" data-user-first-name="{{ user.first_name }}" data-user-last-name="{{ user.last_name }}" data-user-username="{{ user.username }}" data-user-is-staff="{{ user.is_staff }}">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-user" data-user-id="{{ user.id }}" data-user-first-name="{{ user.first_name }}" data-user-last-name="{{ user.last_name }}" data-user-username="{{ user.username }}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="add-user-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Add User
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-add-users">
+                {% csrf_token %}
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            First Name
+                        </label>
+                        <input type="text" name="firstname" id="firstname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Last Name
+                        </label>
+                        <input type="text" name="lastname" id="lastname" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Username
+                        </label>
+                        <input type="text" name="username" id="username" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Password
+                        </label>
+                        <input type="password"name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Confirm Password
+                        </label>
+                        <input type="password" name="confirm-password" id="confirm-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="flex items-start mb-5">
+                        <div class="flex items-center h-5">
+                            <input id="is-staff" name="is-staff" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" />
+                        </div>
+                        <label for="is-staff" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Admin</label>
+                    </div>                    
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Submit New User
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+
+<div id="update-user-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Update User
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-update-users">
+                {% csrf_token %}
+                <input type="hidden" id="user-id-update" name="user-id">
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <label for="firstname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            First Name
+                        </label>
+                        <input type="text" name="firstname" id="firstname-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="lastname" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Last Name
+                        </label>
+                        <input type="text" name="lastname" id="lastname-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Username
+                        </label>
+                        <input type="text" name="username" id="username-update" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Password
+                        </label>
+                        <input type="password" name="password" id="password-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Confirm Password
+                        </label>
+                        <input type="password" name="confirm-password" id="confirm-password-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                    </div>
+                    <div class="flex items-start mb-5">
+                        <div class="flex items-center h-5">
+                            <input id="is-staff-update" name="is-staff" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" />
+                        </div>
+                        <label for="is-staff" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Admin</label>
+                    </div>                    
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Update User
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+{% endblock %}
+
+{% block scripts %}
+<script>
+const addUserURL = "{% url 'add-user' %}";
+const updateUserURL = "{% url 'update-user' %}";
+const deleteUserURL = "{% url 'delete-user' %}";
+</script>
+<script src="{% static 'js/users.js' %}"></script>
+{% endblock %}

@@ -180,9 +180,9 @@
 
 {% block scripts %}
 <script>
-var addFeeURL = "{% url 'add-fee' %}";
-var updateFeeURL = "{% url 'update-fee' %}";
-var deleteFeeURL = "{% url 'delete-fee' %}";
+const addFeeURL = "{% url 'add-fee' %}";
+const updateFeeURL = "{% url 'update-fee' %}";
+const deleteFeeURL = "{% url 'delete-fee' %}";
 </script>
 <script src="{% static 'js/fees.js' %}"></script>
 {% endblock %}

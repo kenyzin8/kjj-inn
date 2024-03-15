@@ -281,6 +281,10 @@ def delete_fee(request):
 @login_required
 def manage_room_types(request):
     room_types = RoomType.objects.filter(is_active=True).order_by('-created_at')
+
+    for room_type in room_types:
+        room_type.fee_ids = [fee.id for fee in room_type.fee.all()]
+
     fees = Fee.objects.filter(is_active=True)
     context = {
         'room_types': room_types,
@@ -296,7 +300,6 @@ def add_room_type(request):
 
     name = request.POST.get('room-type')
     fee_ids = request.POST.getlist('fees[]')
-    print(name, fee_ids)
 
     if not name:
         return JsonResponse({'success': False, 'message': 'Name is required'})
@@ -331,3 +334,150 @@ def add_room_type(request):
     }
     
     return JsonResponse({'success': True, 'message': 'Room type added successfuly', 'data': data, 'unformatted_data': unformatted_data})
+
+@staff_required
+@login_required
+def update_room_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    room_type_id = request.POST.get('room-type-id')
+    name = request.POST.get('room-type')
+    fee_ids = request.POST.getlist('fees[]')
+
+    if not room_type_id:
+        return JsonResponse({'success': False, 'message': 'Invalid room type id'})
+
+    if not name:
+        return JsonResponse({'success': False, 'message': 'Name is required'})
+    
+    if not fee_ids:
+        return JsonResponse({'success': False, 'message': 'At least one fee is required'})
+
+    room_type = RoomType.objects.get(id=room_type_id)
+
+    if room_type.name == name and [fee.id for fee in room_type.fee.all()] == [int(fee_id) for fee_id in fee_ids]:
+        return JsonResponse({'success': False, 'message': 'No changes made'})
+
+    room_type.name = name
+    room_type.fee.clear()
+    room_type.save()
+
+    for fee_id in fee_ids:
+        fee = Fee.objects.get(id=fee_id)
+        room_type.fee.add(fee)
+
+    data = {
+        'id': room_type.id,
+        'name': room_type.name,
+        'fees': [
+            {
+                'amount': fee.get_amount(),
+                'hours': fee.get_hours(),
+            }
+            for fee in room_type.fee.all()
+        ],
+    }
+
+    unformatted_data = {
+        'id': room_type.id,
+        'name': room_type.name,
+        'fees': fee_ids,
+    }
+    
+    return JsonResponse({'success': True, 'message': 'Room type updated successfuly', 'data': data, 'unformatted_data': unformatted_data})
+
+@staff_required
+@login_required
+def delete_room_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    data = json.loads(request.body)
+    room_type_id = data.get('id')
+
+    if not room_type_id:
+        return JsonResponse({'success': False, 'message': 'Invalid room type id'})
+
+    room_type = RoomType.objects.filter(id=room_type_id).first()
+    room_type.is_active = False
+    room_type.save()
+    return JsonResponse({'success': True, 'message': 'Room type deleted successfuly'})
+
+@staff_required
+@login_required
+def manage_buildings(request):
+    buildings = Building.objects.filter(is_active=True).order_by('-created_at')
+    context = {
+        'buildings': buildings
+    }
+    return render(request, 'manage/buildings.html', context)
+
+@staff_required
+@login_required
+def add_building(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    name = request.POST.get('building-name')
+
+    if not name:
+        return JsonResponse({'success': False, 'message': 'Name is required'})
+
+    building = Building(name=name)
+    building.save()
+
+    data = {
+        'id': building.id,
+        'name': building.name,
+    }
+
+    return JsonResponse({'success': True, 'message': 'Building added successfuly', 'data': data})
+
+@staff_required
+@login_required
+def update_building(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    building_id = request.POST.get('building-id')
+    name = request.POST.get('building-name')
+
+    if not building_id:
+        return JsonResponse({'success': False, 'message': 'Invalid building id'})
+
+    if not name:
+        return JsonResponse({'success': False, 'message': 'Name is required'})
+
+    building = Building.objects.get(id=building_id)
+
+    if building.name == name:
+        return JsonResponse({'success': False, 'message': 'No changes made'})
+
+    building.name = name
+    building.save()
+
+    data = {
+        'id': building.id,
+        'name': building.name,
+    }
+    
+    return JsonResponse({'success': True, 'message': 'Building updated successfuly', 'data': data})
+
+@staff_required
+@login_required
+def delete_building(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    data = json.loads(request.body)
+    building_id = data.get('id')
+
+    if not building_id:
+        return JsonResponse({'success': False, 'message': 'Invalid building id'})
+
+    building = Building.objects.filter(id=building_id).first()
+    building.is_active = False
+    building.save()
+    
+    return JsonResponse({'success': True, 'message': 'Building deleted successfuly'})

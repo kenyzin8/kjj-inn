@@ -94,19 +94,40 @@ $(document).on('click', '.close-modal-button', function() {
 
 function setupTableSearch(tableId, searchInputId) {
     const searchInput = document.getElementById(searchInputId);
+    const table = document.getElementById(tableId);
+    const tbody = table.querySelector('tbody');
+
+    const noDataRow = tbody.insertRow();
+    noDataRow.classList.add('border-b');
+    noDataRow.classList.add('border-gray-700');
+    noDataRow.classList.add('bg-gray-800');
+    noDataRow.style.display = 'none'; 
+    const cell = noDataRow.insertCell();
+
+
     searchInput.addEventListener('keyup', function(e) {
         const searchValue = e.target.value.toLowerCase().trim().replace(/\u00A0/g, ' ').replace(/,/g, '');
-        const tableRows = document.querySelectorAll(`#${tableId} tbody tr`);
+        cell.innerHTML = `<div class="my-5 ms-2 font-semibold italic">Oops, no data available for ${e.target.value}<div>`;
+        cell.colSpan = tbody.rows[0].cells.length; 
+        const tableRows = tbody.querySelectorAll('tr');
+        let visibleRowCount = 0;
+
         tableRows.forEach(row => {
-            const rowText = row.innerText.toLowerCase().replace(/\u00A0/g, ' ').replace(/,/g, '');
-            if (rowText.includes(searchValue)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+            if (row !== noDataRow) {
+                const rowText = row.innerText.toLowerCase().replace(/\u00A0/g, ' ').replace(/,/g, '');
+                if (rowText.includes(searchValue)) {
+                    row.style.display = '';
+                    visibleRowCount++;
+                } else {
+                    row.style.display = 'none';
+                }
             }
         });
+
+        noDataRow.style.display = visibleRowCount === 0 ? '' : 'none';
     });
 }
+
 
 function getCSRFTokenFromCookies(){
     const cookie = document.cookie;
