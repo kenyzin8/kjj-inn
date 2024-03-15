@@ -15,8 +15,13 @@ def index(request):
 def dashboard(request):
     user = request.user
 
+    breadcrumbs = [
+        ('Dashboard', None), 
+    ]
+
     context = {
-        'user': user
+        'user': user,
+        'breadcrumbs': breadcrumbs
     }
 
     return render(request, 'admin/dashboard.html', context)
@@ -51,8 +56,15 @@ def login_user(request):
 @login_required
 def user_management(request):
     users = User.objects.filter(is_active=True).order_by('-date_joined')
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('User Management', None),
+    ]
+
     context = {
-        'users': users
+        'users': users,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'admin/users.html', context)
 

@@ -10,13 +10,38 @@
                                                                 text-gray-900 text-white hover:bg-gray-700
                                                             {% endif %}">
                     <i class="fa-solid fa-chart-pie"></i>
-                <span class="ms-3">Dashboard</span>
+                    <span class="ms-3">Dashboard</span>
                 </a>
             </li>
             <li>
                 <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <i class="fa-solid fa-person-walking-luggage"></i>
-                <span class="ms-3">Check-In</span>
+                    <span class="ms-3">Check-In</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i class="fa-solid fa-store"></i>
+                    <span class="ms-3">Store</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i class="fa-solid fa-dolly"></i>
+                    <span class="ms-3">Inventory</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-700">
+            <li>
+                <a href="{% url 'user-management' %}" class="flex items-center p-2 rounded-md group 
+                                                            {% if current_url_name == 'user-management' %}
+                                                                bg-[orange] text-black font-bold
+                                                            {% else %}
+                                                                text-gray-900 text-white hover:bg-gray-700
+                                                            {% endif %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="ms-3">Users</span>
                 </a>
             </li>
             <li>
@@ -69,17 +94,6 @@
                 </ul>
             </li>
             <li>
-                <a href="{% url 'user-management' %}" class="flex items-center p-2 rounded-md group 
-                                                            {% if current_url_name == 'user-management' %}
-                                                                bg-[orange] text-black font-bold
-                                                            {% else %}
-                                                                text-gray-900 text-white hover:bg-gray-700
-                                                            {% endif %}">
-                    <i class="fa-solid fa-users"></i>
-                    <span class="ms-3">Users</span>
-                </a>
-            </li>
-            <li>
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-reports" data-collapse-toggle="dropdown-reports" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-paperclip"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Reports</span>
@@ -97,16 +111,6 @@
                         </a>
                     </li>
                 </ul>
-            </li>
-        </ul>
-        <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
-            <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
-                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 17 20">
-                    <path d="M7.958 19.393a7.7 7.7 0 0 1-6.715-3.439c-2.868-4.832 0-9.376.944-10.654l.091-.122a3.286 3.286 0 0 0 .765-3.288A1 1 0 0 1 4.6.8c.133.1.313.212.525.347A10.451 10.451 0 0 1 10.6 9.3c.5-1.06.772-2.213.8-3.385a1 1 0 0 1 1.592-.758c1.636 1.205 4.638 6.081 2.019 10.441a8.177 8.177 0 0 1-7.053 3.795Z"/>
-                </svg>
-                <span class="ms-3">Upgrade to Pro</span>
-                </a>
             </li>
         </ul>
     </div>

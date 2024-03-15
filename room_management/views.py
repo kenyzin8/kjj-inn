@@ -12,10 +12,17 @@ def manage_rooms(request):
     rooms = Room.objects.filter(is_active=True).order_by('-room_number')
     room_types = RoomType.objects.filter(is_active=True)
     buildings = Building.objects.filter(is_active=True)
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Manage Rooms', None), 
+    ]
+
     context = {
         'rooms': rooms,
         'room_types': room_types,
-        'buildings': buildings
+        'buildings': buildings,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'manage/rooms.html', context)
 
@@ -168,8 +175,15 @@ def update_room(request):
 @login_required
 def manage_fee(request):
     fees = Fee.objects.filter(is_active=True).order_by('-created_at')
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Manage Fees', None), 
+    ]
+
     context = {
-        'fees': fees
+        'fees': fees,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'manage/fees.html', context)
 
@@ -286,9 +300,16 @@ def manage_room_types(request):
         room_type.fee_ids = [fee.id for fee in room_type.fee.all()]
 
     fees = Fee.objects.filter(is_active=True)
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Manage Room Types', None), 
+    ]
+    
     context = {
         'room_types': room_types,
-        'fees': fees
+        'fees': fees,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'manage/room_types.html', context)
 
@@ -408,8 +429,15 @@ def delete_room_type(request):
 @login_required
 def manage_buildings(request):
     buildings = Building.objects.filter(is_active=True).order_by('-created_at')
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Manage Buildings', None), 
+    ]
+
     context = {
-        'buildings': buildings
+        'buildings': buildings,
+        'breadcrumbs': breadcrumbs
     }
     return render(request, 'manage/buildings.html', context)
 
