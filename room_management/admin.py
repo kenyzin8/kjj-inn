@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Building, Fee, RoomType, Room, Customer
+from .models import Building, Fee, RoomType, Room, Customer, ExtraBedPrice
 
 @admin.register(Building)
 class BuildingAdmin(admin.ModelAdmin):
@@ -31,7 +31,20 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('alias', 'room', 'check_in_date', 'check_out_date', 'created_at', 'updated_at', 'is_active')
-    list_filter = ('alias', 'room', 'check_in_date', 'check_out_date', 'created_at', 'updated_at', 'is_active')
-    search_fields = ('alias', 'room', 'check_in_date', 'check_out_date', 'created_at', 'updated_at', 'is_active')
-    ordering = ('alias', 'room', 'check_in_date', 'check_out_date', 'created_at', 'updated_at', 'is_active')
+    list_display = ('alias', 'room', 'check_in_date', 'check_out_date', 'updated_at', 'amount_paid', 'plate_number', 'extra_bed', 'is_active')
+    list_filter = ('alias', 'room', 'check_in_date', 'check_out_date', 'updated_at', 'amount_paid', 'plate_number', 'extra_bed', 'is_active')
+    search_fields = ('alias', 'room', 'check_in_date', 'check_out_date', 'updated_at', 'amount_paid', 'plate_number', 'extra_bed', 'is_active')
+    ordering = ('alias', 'room', 'check_in_date', 'check_out_date', 'updated_at', 'amount_paid', 'plate_number', 'extra_bed', 'is_active')
+
+@admin.register(ExtraBedPrice)
+class ExtraBedPriceAdmin(admin.ModelAdmin):
+    list_display = ('price', 'created_at', 'updated_at', 'is_active')
+    list_filter = ('price', 'created_at', 'updated_at', 'is_active')
+    search_fields = ('price',)
+    ordering = ('price', 'created_at', 'updated_at', 'is_active')
+
+    def has_add_permission(self, request, obj=None):
+        return not ExtraBedPrice.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

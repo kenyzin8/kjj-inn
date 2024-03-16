@@ -19,4 +19,7 @@ urlpatterns = [
    path('manage/buildings/add/', views.add_building, name='add-building'),
    path('manage/buildings/update/', views.update_building, name='update-building'),
    path('manage/buildings/delete/', views.delete_building, name='delete-building'),
+   path('customer/check-in/', views.customer_check_in, name='customer-check-in'),
+   path('customer/check-out/', views.customer_check_out, name='customer-check-out'),
+   path('customer/check-in/add/', views.add_customer_check_in, name='add-customer-check-in'),
 ]

@@ -18,6 +18,14 @@ class Building(models.Model):
     def get_rooms(self):
         return self.room_set.filter(is_active=True)
 
+    def get_active_room_count(self):
+        active_rooms = Customer.objects.filter(is_active=True, room__building=self).count()
+        plural = 's' if active_rooms != 1 else ''
+        return f'{active_rooms} Room{plural} Occupied'
+
+    def get_active_room_count_number(self):
+        return Customer.objects.filter(is_active=True, room__building=self).count()
+
     class Meta:
         verbose_name = "Building"
         verbose_name_plural = "Buildings"
@@ -88,10 +96,13 @@ class Room(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.building.name} - {self.room_number}"
+        return f"{self.building.name} - Room {self.room_number}"
 
     def get_room(self):
         return f"Room&nbsp;{self.room_number}"
+
+    def get_room_for_dropdown(self):
+        return f"{self.building.name} - Room {self.room_number}"
 
     def get_good_for(self):
         plural = 's' if int(self.good_for) > 1 else ''
@@ -105,6 +116,9 @@ class Room(models.Model):
     def get_updated_by(self):
         return f'{self.updated_by.first_name}&nbsp;{self.updated_by.last_name}'
 
+    def is_room_occupied(self):
+        return Customer.objects.filter(room=self, is_active=True).exists()
+
     class Meta:
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
@@ -112,8 +126,9 @@ class Room(models.Model):
 class Customer(models.Model):
     alias = models.CharField(max_length=100, default="Anonymous")
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    check_in_date = models.DateTimeField()
-    check_out_date = models.DateTimeField()
+    fee = models.ForeignKey(Fee, on_delete=models.CASCADE, blank=True, null=True)
+    check_in_date = models.DateTimeField(auto_now_add=True)
+    check_out_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -123,16 +138,62 @@ class Customer(models.Model):
 
     plate_number = models.CharField(max_length=10, blank=True, null=True)
 
+    extra_bed = models.IntegerField(default=0)
+
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.room.building.name} - {self.room.room_number} - {self.check_in_date} - {self.check_out_date}"
 
+    def unformatted_get_remaining_time(self):
+        remaining_time = max(self.check_out_date - timezone.now(), timezone.timedelta(seconds=0))
+        total_seconds = remaining_time.total_seconds()
+        hours, remainder = divmod(remaining_time.total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        formatted_time = f"{int(hours)}hrs {int(minutes)}mins {int(seconds)}secs"
+        return formatted_time if total_seconds > 0 else "end"
+
+    def get_remaining_time(self):
+        remaining_time = max(self.check_out_date - timezone.now(), timezone.timedelta(seconds=0))
+        hours, remainder = divmod(remaining_time.total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        parts = []
+        if hours:
+            parts.append(f"{int(hours)}hr{'s' if hours != 1 else ''}")
+        if hours or minutes:
+            parts.append(f"{int(minutes)}min{'s' if minutes != 1 else ''}")
+        parts.append(f"{int(seconds)}sec{'s' if seconds != 1 else ''}")
+        return ' '.join(parts)
+
+    def get_formatted_check_out_date(self):
+        return self.check_out_date.strftime("%B %d, %Y - %I:%M %p")
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.price_at_check_in = self.room.room_type.fee.first().amount
+        
+        # self.check_out_date = self.check_in_date + timezone.timedelta(hours=self.fee.hours)
+
         super(Customer, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Customer"
         verbose_name_plural = "Customers"
+
+class ExtraBedPrice(models.Model):
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"₱{self.price:,.2f}"
+
+    def get_updated_at(self):
+        self.updated_at = timezone.localtime(self.updated_at)
+        return self.updated_at.strftime("%B %d, %Y - %I:%M %p")
+
+    class Meta:
+        verbose_name = "Extra Bed Price"
+        verbose_name_plural = "Extra Bed Prices"

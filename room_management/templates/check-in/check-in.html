@@ -1,0 +1,151 @@
+{% extends 'admin-kjj/base.html' %}
+
+{% load static %}
+
+{% block title %}Customer Check-In{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="my-5">
+    <div class="mb-2">
+        <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <span class="font-semibold">Customer Check-In</span>
+            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                Check-in customer here to start their stay.
+            </p>
+        </caption>
+    </div>
+    <div class="space-y-4 pb-4">
+        <button id="add-check-in-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+            <i class="fa-solid fa-plus mr-1"></i> Add Customer
+        </button>
+    </div>
+    <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-3">
+        {% for building in buildings %}
+        <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 building-index-{{ building.id }} {% if building.get_active_room_count_number <= 0 %}hidden{% endif %}">
+            <div class="flex items-center justify-between mb-4">
+                <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">{{ building.name }}</h5>
+                <div class="inline-block text-gray-400 focus:ring-gray-700 rounded-lg text-sm p-1.5 building-active-count-{{ building.id }}">
+                    {{ building.get_active_room_count }}
+                </div>
+           </div>
+           <div class="flow-root">
+                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 customers-list-{{ building.id }}">
+                    {% for customer in customers %}
+                    {% if customer.room.building.id == building.id %}
+                    <li class="py-3 sm:py-4 customer-index-{{ customer.id }}">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <button class="text-md font-medium dark:text-[orange] check-out-customer" data-customer-id="{{ customer.id }}">
+                                    <i class="fa-solid fa-right-from-bracket w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 min-w-0 ms-4">
+                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white mb-1">
+                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-name">
+                                        {{ customer.room.get_room|safe }}
+                                    </span>
+                                </p>
+                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 text-gray-400">
+                                        {{ customer.fee.get_hours|safe }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                                <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] remaining-time" data-remaining-time="{{ customer.unformatted_get_remaining_time }}" data-customer-id="{{ customer.id }}" data-expected-check-out-time="{{ customer.get_formatted_check_out_date }}">
+                                    {{ customer.get_remaining_time }}
+                                </span>  
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+           </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="add-check-in-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Check-In Customer
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-add-check-in">
+                {% csrf_token %}
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <label for="select-room" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Room
+                        </label>
+                        <select name="select-room" id="select-room" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                            <option value="" selected disabled>Select Room</option>
+                            {% for room in rooms %}
+                            {% if room.is_room_occupied != True %}
+                                <option value="{{ room.id }}" data-room-type-id="{{ room.room_type.id }}">{{ room.get_room_for_dropdown|safe }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="select-hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Hours
+                        </label>
+                        <select name="select-hours" id="select-hours" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white">
+                            <option value="" selected disabled>Select Fee</option>
+                            
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="amount-paid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Amount Paid (₱)
+                        </label>
+                        <input name="amount-paid" id="amount-paid" type="number" min="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="plate-number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Plate Number
+                        </label>
+                        <input name="plate-number" id="plate-number" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-500 dark:text-white" placeholder="For security purposes" required>
+                    </div>
+
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="extra-bed" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Extra Bed
+                        </label>
+                        <input name="extra-bed" id="extra-bed" type="number" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" value="0" required>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Submit Check-In Customer
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const customerCheckOutURL = "{% url 'customer-check-out' %}";
+const getRoomPricesURL = "{% url 'get-room-type-prices' %}";
+const addCustomerCheckInURL = "{% url 'add-customer-check-in' %}";
+</script>
+<script src="{% static 'js/check-in.js' %}"></script>
+{% endblock %}
+
+// TODO: add billing statement

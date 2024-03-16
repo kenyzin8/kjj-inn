@@ -10,7 +10,7 @@
         setTimeout(function() {
             $('#fullscreen-spinner').addClass('hidden');
             document.body.classList.remove('no-scroll');
-        }, 300);
+        }, 100);
         $(document).ajaxStart(function() {
             $('#fullscreen-spinner').removeClass('hidden');
             document.body.classList.add('no-scroll');

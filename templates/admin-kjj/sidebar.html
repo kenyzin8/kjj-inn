@@ -14,7 +14,12 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <a href="{% url 'customer-check-in' %}" class="flex items-center p-2 rounded-md group 
+                                                            {% if current_url_name == 'customer-check-in' %}
+                                                                bg-[orange] text-black font-bold
+                                                            {% else %}
+                                                                text-gray-900 text-white hover:bg-gray-700
+                                                            {% endif %}">
                     <i class="fa-solid fa-person-walking-luggage"></i>
                     <span class="ms-3">Check-In</span>
                 </a>
@@ -89,6 +94,16 @@
                                                                     text-white hover:bg-gray-700
                                                                 {% endif %}">
                             Rooms
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == '#' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Extra Bed Price
                         </a>
                     </li>
                 </ul>

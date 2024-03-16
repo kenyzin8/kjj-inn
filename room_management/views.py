@@ -509,3 +509,100 @@ def delete_building(request):
     building.save()
     
     return JsonResponse({'success': True, 'message': 'Building deleted successfuly'})
+
+@login_required
+def customer_check_in(request):
+    rooms = Room.objects.filter(is_active=True).order_by('room_number')
+    buildings = Building.objects.filter(is_active=True)
+    customers = Customer.objects.filter(is_active=True).order_by('room__room_number')
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Customer Check In', None), 
+    ]
+
+    context = {
+        'rooms': rooms,
+        'buildings': buildings,
+        'breadcrumbs': breadcrumbs,
+        'customers': customers
+    }
+    return render(request, 'check-in/check-in.html', context)
+
+@login_required
+def customer_check_out(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    data = json.loads(request.body)
+    checkin_id = data.get('id')
+
+    if not checkin_id:
+        return JsonResponse({'success': False, 'message': 'Invalid check in id'})
+
+    checkin = Customer.objects.filter(id=checkin_id).first()
+    checkin.check_out_date = timezone.now()
+    checkin.is_active = False
+    checkin.save()
+
+    data = {
+        'id': checkin.id,
+        'building_id': checkin.room.building.id,
+        'building_active_count': checkin.room.building.get_active_room_count_number(),
+        'building_active_count_text': checkin.room.building.get_active_room_count(),
+        'room_id': checkin.room.id,
+        'room_type_id': checkin.room.room_type.id,
+        'room_get_room_for_dropdown': checkin.room.get_room_for_dropdown(),
+    }
+
+    return JsonResponse({'success': True, 'message': 'Customer checked out successfuly', 'data': data})
+
+@login_required
+def add_customer_check_in(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    room = request.POST.get('select-room')
+    hours = request.POST.get('select-hours')
+    amount_paid = request.POST.get('amount-paid')
+    plate_number = request.POST.get('plate-number')
+    extra_bed = request.POST.get('extra-bed')
+
+    if not room or not hours or not amount_paid:
+        return JsonResponse({'success': False, 'message': 'Room, hours and amount paid are required'})
+
+    room = Room.objects.get(id=room)
+    hours = Fee.objects.get(id=hours)
+
+    customer = Customer(room=room, fee=hours, amount_paid=amount_paid, plate_number=plate_number, extra_bed=extra_bed)
+    customer.save()
+
+    customer.check_out_date = customer.check_in_date + timezone.timedelta(hours=hours.hours)
+    customer.save()
+
+    data = {
+        'id': customer.id,
+        'building_id': customer.room.building.id,
+        'building_active_count': customer.room.building.get_active_room_count(),
+        'room_id': customer.room.id,
+        'room_name': str(customer.room.get_room()),
+        'room_hours': str(customer.fee.get_hours()),
+        'remaining_time': customer.get_remaining_time(),
+        'unformatted_get_remaining_time': customer.unformatted_get_remaining_time(),
+        'expected_check_out_date': str(customer.get_formatted_check_out_date),
+    }
+
+    # data = {
+    #     'id': customer.id,
+    #     'room': str(customer.room.get_room()),
+    #     'building': str(customer.room.building.get_building()),
+    #     'room_type': customer.room.room_type.name,
+    #     'check_in_date': str(customer.check_in_date),
+    #     'check_out_date': str(customer.check_out_date),
+    #     'amount_paid': str(customer.amount_paid),
+    #     'plate_number': customer.plate_number,
+    #     'extra_bed': str(customer.extra_bed),
+    #     'date_updated': str(customer.get_updated_at()),
+    # }
+
+    return JsonResponse({'success': True, 'message': 'Customer checked in successfuly', 'data': data})
