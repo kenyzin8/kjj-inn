@@ -15,7 +15,7 @@
             </li>
             <li>
                 <a href="{% url 'customer-check-in' %}" class="flex items-center p-2 rounded-md group 
-                                                            {% if current_url_name == 'customer-check-in' %}
+                                                            {% if current_url_name == 'customer-check-in' or current_url_name == 'view-check-in-summary' %}
                                                                 bg-[orange] text-black font-bold
                                                             {% else %}
                                                                 text-gray-900 text-white hover:bg-gray-700

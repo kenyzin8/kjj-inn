@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
-import json
 from django.contrib.auth.decorators import login_required
 from core.decorators import staff_required
+
+import json
+import uuid
 
 @staff_required
 @login_required
@@ -85,7 +87,7 @@ def get_room_type_prices(request):
 
     room_type_id = request.GET.get('room_type_id')
     room_type = RoomType.objects.filter(is_active=True, id=room_type_id).first()
-    prices = room_type.fee.all()
+    prices = room_type.fee.all().order_by('hours')
     data = []
     for price in prices:
         data.append({
@@ -516,6 +518,10 @@ def customer_check_in(request):
     buildings = Building.objects.filter(is_active=True)
     customers = Customer.objects.filter(is_active=True).order_by('room__room_number')
 
+    for customer in customers:
+        customer.slug = uuid.uuid4().hex
+        customer.save()
+
     breadcrumbs = [
         ('Dashboard', '/dashboard/'),
         ('Customer Check In', None), 
@@ -585,24 +591,42 @@ def add_customer_check_in(request):
         'building_id': customer.room.building.id,
         'building_active_count': customer.room.building.get_active_room_count(),
         'room_id': customer.room.id,
+        'room_number': customer.room.room_number,
         'room_name': str(customer.room.get_room()),
         'room_hours': str(customer.fee.get_hours()),
         'remaining_time': customer.get_remaining_time(),
         'unformatted_get_remaining_time': customer.unformatted_get_remaining_time(),
-        'expected_check_out_date': str(customer.get_formatted_check_out_date),
+        'expected_check_out_date': str(customer.get_formatted_check_out_date()),
+        'formatted_check_in_date': str(customer.get_formatted_check_in_date()),
+        'formatted_check_out_date': str(customer.get_formatted_check_out_date()),
+        'slug': customer.slug,
     }
 
-    # data = {
-    #     'id': customer.id,
-    #     'room': str(customer.room.get_room()),
-    #     'building': str(customer.room.building.get_building()),
-    #     'room_type': customer.room.room_type.name,
-    #     'check_in_date': str(customer.check_in_date),
-    #     'check_out_date': str(customer.check_out_date),
-    #     'amount_paid': str(customer.amount_paid),
-    #     'plate_number': customer.plate_number,
-    #     'extra_bed': str(customer.extra_bed),
-    #     'date_updated': str(customer.get_updated_at()),
-    # }
-
     return JsonResponse({'success': True, 'message': 'Customer checked in successfuly', 'data': data})
+
+@login_required
+def view_check_in_summary(request, customer_slug):
+    customer = Customer.objects.filter(slug=customer_slug).first()
+
+    if not customer or not customer.is_active:
+        return redirect('customer-check-in')
+
+    total_price = customer.get_extra_bed_price_unformatted() + customer.get_room_price_unformatted()
+    total_quantity = customer.extra_bed + 1
+
+    customer.total_price = f"₱&nbsp;{total_price:,.2f}"
+    customer.total_quantity = total_quantity
+    customer.grand_total =  f"₱&nbsp;{(total_price - customer.amount_paid):,.2f}"
+    customer.grand_total_unformatted = total_price - customer.amount_paid
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Customer Check In', '/customer/check-in/'),
+        (f'{customer.room} Summary', None), 
+    ]
+
+    context = {
+        'customer': customer,
+        'breadcrumbs': breadcrumbs
+    }
+    return render(request, 'check-in/view-check-in-summary.html', context)

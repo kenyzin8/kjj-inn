@@ -22,4 +22,5 @@ urlpatterns = [
    path('customer/check-in/', views.customer_check_in, name='customer-check-in'),
    path('customer/check-out/', views.customer_check_out, name='customer-check-out'),
    path('customer/check-in/add/', views.add_customer_check_in, name='add-customer-check-in'),
+   path('customer/check-in/<str:customer_slug>/summary/', views.view_check_in_summary, name='view-check-in-summary'),
 ]

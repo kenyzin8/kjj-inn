@@ -61,12 +61,13 @@ $(document).ready(function() {
     });
 });
 
-$(document).on('click', '.check-out-customer', function() {
-    const roomName = $(this).closest('li').find('.room-name').text();
+$(document).on('click', '.check-out-customer', function(e) {
+    e.stopPropagation();
+    const roomName = $(this).data('room-name');
 
     Swal.fire({
         title: "Confirmation",
-        html: `<span class="font-semibold text-md">Are you sure you want to check out ${roomName}?</span>`,
+        html: `<span class="font-semibold text-md">Are you sure you want to check out Room ${roomName}?</span>`,
         icon: "warning",
         showDenyButton: true,
         confirmButtonColor: "orange",
@@ -166,31 +167,44 @@ $(document).on('submit', '#form-add-check-in', function(e) {
 
                 customersList.prepend(`
                     <li class="py-3 sm:py-4 customer-index-${customerId}">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <button class="text-md font-medium dark:text-[orange] check-out-customer" data-customer-id="${customerId}">
-                                    <i class="fa-solid fa-right-from-bracket w-4 h-4"></i>
-                                </button>
+                        <div class="flex items-center hover:bg-gray-700 hover:rounded-lg p-1 cursor-pointer view-customer-summary" data-customer-slug="${response.data.data.slug}">
+                            <div id="tooltip-${customerId}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-[orange]">
+                                Check-Out Customer
+                                <div class="tooltip-arrow" data-popper-arrow></div>
                             </div>
-                            <div class="flex-1 min-w-0 ms-4">
-                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white mb-1">
-                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-name">
+                            <div class="flex-1 min-w-0">
+                                <div class="inline-flex flex-col text-start font-medium">
+                                    <span class="truncate text-md room-name dark:text-[orange]">
                                         ${response.data.data.room_name}
                                     </span>
-                                </p>
-                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 text-gray-400">
+                                    <span class="text-xs truncate text-gray-400">
                                         ${response.data.data.room_hours}
                                     </span>
-                                </p>
+                                    <span class="text-xs truncate text-gray-400">
+                                        ${response.data.data.formatted_check_in_date}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] remaining-time" data-remaining-time="${response.data.data.unformatted_get_remaining_time}" data-customer-id="${customerId}" data-expected-check-out-time="${response.data.data.expected_check_out_date}">
-                                    ${response.data.data.remaining_time}
-                                </span>  
+                            <div class="inline-flex items-center">
+                                <div class="inline-flex flex-col text-end">
+                                    <span class="text-md font-medium dark:text-[orange] remaining-time" data-remaining-time="${response.data.data.unformatted_get_remaining_time}" data-customer-id="${customerId}" data-expected-check-out-time="${response.data.data.expected_check_out_date}">
+                                        ${response.data.data.remaining_time}
+                                    </span>
+                                    <span class="text-xs font-medium text-gray-500 truncate dark:text-gray-400">
+                                        ${response.data.data.formatted_check_out_date}
+                                    </span>
+                                    <p class="p-0">
+                                        <button class="check-out-customer" data-customer-id="${customerId}" data-room-name="${response.data.data.room_number}">
+                                            <span class="text-xs font-semibold dark:text-[red] px-2.5 py-0.5 rounded dark:bg-gray-900 room-name">
+                                                Check Out
+                                                <i class="fa-solid fa-caret-up"></i>
+                                            </span>
+                                        </button>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </li>
+                    </li>                
                 `);
 
                 var newCustomerElement = $(`.customer-index-${customerId} .remaining-time`)[0];
@@ -209,4 +223,10 @@ $(document).on('submit', '#form-add-check-in', function(e) {
         .catch(function (error) {
             showError(error.message);
         })
+});
+
+$(document).on('click', '.view-customer-summary', function() {
+    const customerSlug = $(this).attr('data-customer-slug');
+    const viewSummaryURL = viewCheckInSummaryURL.replace('0', customerSlug);
+    window.location.replace(viewSummaryURL);
 });

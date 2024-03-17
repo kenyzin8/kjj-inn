@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+import uuid
+
 class Building(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -131,21 +133,38 @@ class Customer(models.Model):
     check_out_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
     price_at_check_in = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
     plate_number = models.CharField(max_length=10, blank=True, null=True)
-
     extra_bed = models.IntegerField(default=0)
-
     is_active = models.BooleanField(default=True)
+
+    slug = models.SlugField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"{self.room.building.name} - {self.room.room_number} - {self.check_in_date} - {self.check_out_date}"
 
+    def get_extra_bed_price(self):
+        extra_bed_price = ExtraBedPrice.objects.first()
+        total = self.extra_bed * extra_bed_price.price
+        return f"₱&nbsp;{total:,.2f}"
+
+    def get_room_price(self):
+        return f"₱&nbsp;{self.price_at_check_in:,.2f}"
+
+    def get_amount_paid(self):
+        return f"₱&nbsp;{self.amount_paid:,.2f}"
+
+    def get_extra_bed_price_unformatted(self):
+        extra_bed_price = ExtraBedPrice.objects.first()
+        total = self.extra_bed * extra_bed_price.price
+        return total
+
+    def get_room_price_unformatted(self):
+        return self.price_at_check_in
+
     def unformatted_get_remaining_time(self):
+        self.check_out_date = timezone.localtime(self.check_out_date)
         remaining_time = max(self.check_out_date - timezone.now(), timezone.timedelta(seconds=0))
         total_seconds = remaining_time.total_seconds()
         hours, remainder = divmod(remaining_time.total_seconds(), 3600)
@@ -154,6 +173,7 @@ class Customer(models.Model):
         return formatted_time if total_seconds > 0 else "end"
 
     def get_remaining_time(self):
+        self.check_out_date = timezone.localtime(self.check_out_date)
         remaining_time = max(self.check_out_date - timezone.now(), timezone.timedelta(seconds=0))
         hours, remainder = divmod(remaining_time.total_seconds(), 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -166,14 +186,19 @@ class Customer(models.Model):
         return ' '.join(parts)
 
     def get_formatted_check_out_date(self):
+        self.check_out_date = timezone.localtime(self.check_out_date)
         return self.check_out_date.strftime("%B %d, %Y - %I:%M %p")
+
+    def get_formatted_check_in_date(self):
+        self.check_in_date = timezone.localtime(self.check_in_date)
+        return self.check_in_date.strftime("%B %d, %Y - %I:%M %p")
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.price_at_check_in = self.room.room_type.fee.first().amount
         
-        # self.check_out_date = self.check_in_date + timezone.timedelta(hours=self.fee.hours)
-
+        self.slug = uuid.uuid4().hex
+        
         super(Customer, self).save(*args, **kwargs)
 
     class Meta:

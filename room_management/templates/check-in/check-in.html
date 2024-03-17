@@ -5,6 +5,13 @@
 {% block title %}Customer Check-In{% endblock %}
 
 {% block styles %}
+<style>
+@media screen and (max-width: 1500px) {
+    .buildings-wrapper{
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,10 +26,10 @@
     </div>
     <div class="space-y-4 pb-4">
         <button id="add-check-in-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
-            <i class="fa-solid fa-plus mr-1"></i> Add Customer
+            <i class="fa-solid fa-caret-down mr-1"></i> Check In
         </button>
     </div>
-    <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-3">
+    <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-3 buildings-wrapper">
         {% for building in buildings %}
         <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 building-index-{{ building.id }} {% if building.get_active_room_count_number <= 0 %}hidden{% endif %}">
             <div class="flex items-center justify-between mb-4">
@@ -36,28 +43,41 @@
                     {% for customer in customers %}
                     {% if customer.room.building.id == building.id %}
                     <li class="py-3 sm:py-4 customer-index-{{ customer.id }}">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <button class="text-md font-medium dark:text-[orange] check-out-customer" data-customer-id="{{ customer.id }}">
-                                    <i class="fa-solid fa-right-from-bracket w-4 h-4"></i>
-                                </button>
-                            </div>
-                            <div class="flex-1 min-w-0 ms-4">
-                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white mb-1">
-                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-name">
+                        <div class="flex items-center hover:bg-gray-700 hover:rounded-md p-1 cursor-pointer view-customer-summary" data-customer-slug="{{ customer.slug }}">
+                            <div class="flex-1 min-w-0">
+                                <div class="inline-flex flex-col text-start font-medium">
+                                    <span class="truncate text-md room-name dark:text-[orange]">
                                         {{ customer.room.get_room|safe }}
                                     </span>
-                                </p>
-                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                    <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 text-gray-400">
+                                    <span class="text-xs truncate text-gray-400">
                                         {{ customer.fee.get_hours|safe }}
                                     </span>
-                                </p>
+                                    <span class="text-xs truncate text-gray-400">
+                                        {{ customer.get_formatted_check_in_date }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                                <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] remaining-time" data-remaining-time="{{ customer.unformatted_get_remaining_time }}" data-customer-id="{{ customer.id }}" data-expected-check-out-time="{{ customer.get_formatted_check_out_date }}">
-                                    {{ customer.get_remaining_time }}
-                                </span>  
+                            <div class="inline-flex items-center">
+                                <div class="inline-flex flex-col text-end">
+                                    <span class="text-md font-medium dark:text-[orange] remaining-time" data-remaining-time="{{ customer.unformatted_get_remaining_time }}" data-customer-id="{{ customer.id }}" data-expected-check-out-time="{{ customer.get_formatted_check_out_date }}">
+                                        {{ customer.get_remaining_time }}
+                                    </span>
+                                    <span class="text-xs font-medium text-gray-500 truncate dark:text-gray-400">
+                                        {{ customer.get_formatted_check_out_date }}
+                                    </span>
+                                    <p class="p-0">
+                                        <button data-tooltip-target="tooltip-{{ customer.id }}" class="check-out-customer" data-customer-id="{{ customer.id }}" data-room-name="{{ customer.room.room_number }}">
+                                            <span class="text-xs font-semibold dark:text-[red] px-2.5 py-0.5 rounded dark:bg-gray-900 room-name">
+                                                Check Out
+                                                <i class="fa-solid fa-caret-up"></i>
+                                            </span>
+                                        </button>
+                                        <div id="tooltip-{{ customer.id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-[red] transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gray-900">
+                                            Check-Out Customer
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -144,8 +164,10 @@
 const customerCheckOutURL = "{% url 'customer-check-out' %}";
 const getRoomPricesURL = "{% url 'get-room-type-prices' %}";
 const addCustomerCheckInURL = "{% url 'add-customer-check-in' %}";
+const viewCheckInSummaryURL = "{% url 'view-check-in-summary' 0 %}";
 </script>
 <script src="{% static 'js/check-in.js' %}"></script>
 {% endblock %}
 
 // TODO: add billing statement
+// TODO: add additional charges for food
