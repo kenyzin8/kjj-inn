@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'core',
     'room_management',
+    'inventory_management',
 ]
 
 MIDDLEWARE = [

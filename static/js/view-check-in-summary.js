@@ -49,7 +49,7 @@ function initializeTimer(element) {
         $this.text("Waiting for check-out");
         $('.time-progress').css('width', '100%');
         $('.time-progress').text('100%');
-        $('.time-progress').css('background', `red`);
+        $('.time-progress').addClass('bg-red-700');
         $('.time-progress').css('color', `white`);
         return;
     }
@@ -75,7 +75,7 @@ function initializeTimer(element) {
                 clearInterval(interval);
                 delete timers[customerId];
                 $this.text("Waiting for check-out");
-                $('.time-progress').css('background', `red`);
+                $('.time-progress').addClass('bg-red-700');
                 $('.time-progress').css('color', `white`);
             }
 
@@ -90,6 +90,7 @@ function initializeTimer(element) {
 $(document).ready(function() {
     initializeTimer($(".remaining-time"));
 });
+
 $(document).on('click', '.check-out-customer', function() {
     const roomName = $(this).data('room-name');
 

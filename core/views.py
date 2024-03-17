@@ -44,7 +44,8 @@ def login_user(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 auth_login(request, user)
-                return redirect('admin-dashboard') 
+                next_url = request.GET.get('next', 'admin-dashboard')
+                return redirect(next_url)
             else:
                 error_message = 'Invalid username or password.'
     else:
