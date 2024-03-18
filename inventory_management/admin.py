@@ -31,7 +31,14 @@ class StockAdmin(admin.ModelAdmin):
 
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ('quantity', 'created_at', 'updated_at', 'is_active')
-    list_filter = ('quantity', 'created_at', 'updated_at', 'is_active')
-    search_fields = ('quantity', 'created_at', 'updated_at', 'is_active')
-    ordering = ('quantity', 'created_at', 'updated_at', 'is_active')
+    list_display = ('created_at', 'updated_at', 'is_active')
+    list_filter = ('created_at', 'updated_at', 'is_active')
+    search_fields = ('created_at', 'updated_at', 'is_active')
+    ordering = ('created_at', 'updated_at', 'is_active')
+
+@admin.register(PurchaseItem)
+class PurchaseItemAdmin(admin.ModelAdmin):
+    list_display = ('purchase', 'stock', 'quantity', 'created_at', 'updated_at', 'is_active')
+    list_filter = ('purchase', 'stock', 'quantity', 'created_at', 'updated_at', 'is_active')
+    search_fields = ('purchase', 'stock', 'quantity', 'created_at', 'updated_at', 'is_active')
+    ordering = ('purchase', 'stock', 'quantity', 'created_at', 'updated_at', 'is_active')
