@@ -49,7 +49,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="text-white w-full items-center font-bold rounded-md text-sm px-5 py-2.5 text-center bg-gray-700 hover:bg-gray-800">
+                <button type="submit" class="text-white w-full items-center font-bold rounded-md text-sm px-5 py-2.5 text-center bg-gray-700 hover:bg-gray-800 add-to-cart-button">
                     Add To Cart
                 </button>
             </form>
@@ -118,7 +118,7 @@
                 <figure class="flex flex-col items-center justify-center p-3 text-center bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-ss-lg md:border-e dark:bg-gray-800 dark:border-gray-700">
                     <blockquote class="max-w-2xl mx-auto text-gray-500 dark:text-gray-400">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Total
+                            Total Items
                         </h3>
                         <p class="total-quantity">0</p>
                     </blockquote>  
@@ -126,13 +126,13 @@
                 <figure class="flex flex-col items-center justify-center p-3 text-center bg-white border-b border-gray-200 md:rounded-se-lg dark:bg-gray-800 dark:border-gray-700">
                     <blockquote class="max-w-2xl mx-auto text-gray-500 dark:text-gray-400">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Subtotal
+                            To Pay
                         </h3>
                         <p class="total-subtotal">0</p>
                     </blockquote>
                 </figure>
             </div>
-            <button type="submit" class="text-white w-full items-center font-bold  text-sm py-2.5 text-center bg-green-900 hover:bg-green-800 submit-purchase-button">
+            <button type="submit" class="text-white w-full items-center font-bold rounded-b-lg text-sm py-2.5 text-center bg-green-900 hover:bg-green-800 submit-purchase-button">
                 SUBMIT PURCHASE
             </button>
         </div>
@@ -191,6 +191,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
         $(`.subtotal-${data.identifier}`).text(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted));
         updateSubtotal(data.price_unformatted);
 
+        $("#add-to-cart-product-barcode").val('');
+
         if(inCart.includes(data.identifier)){
             $(`#product-${data.identifier}`).val(currentQuantity + parseInt(quantity));
             $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
@@ -240,6 +242,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(".total-quantity").text(parseInt($(".total-quantity").text()) - 1);
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
                 updateSubtotal(data.price_unformatted);
+                $("#add-to-cart-product-barcode").focus();
             }
         });
 
@@ -250,6 +253,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(".total-quantity").text(parseInt($(".total-quantity").text()) + 1);
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
                 updateSubtotal(data.price_unformatted);
+                $("#add-to-cart-product-barcode").focus();
             }
         });
         
@@ -268,6 +272,7 @@ $(document).on('click', '.remove-product-from-cart', function(e){
     inCart = inCart.filter(item => item !== identifier);
     $(".total-quantity").text(parseInt($(".total-quantity").text()) - parseInt($(`#product-${identifier}`).val()));
     $(this).closest('tr').remove();
+    $("#add-to-cart-product-barcode").focus();
 })
 
 $(document).on('click', '#decrement-button', function(){
@@ -275,14 +280,22 @@ $(document).on('click', '#decrement-button', function(){
     if(quantity < 1){
         $("#add-to-cart-quantity-input").val(1);
     }
+    $("#add-to-cart-product-barcode").focus();
+})
+
+$(document).on('click', '#increment-button', function(){
+    const quantity = $(this).val();
+    $("#add-to-cart-product-barcode").focus();
 })
 
 $(document).on('change', '#room-number', function(){
     const customerId = $(this).val();
     $("#customer-id-to-submit").val(customerId);
+    $("#add-to-cart-product-barcode").focus();
 })
 
 $(document).on('click', '#no-room-check-box', function(){
+    
     if($(this).is(':checked')){
         $("#room-number").val('');
         $("#room-number").trigger('change');
@@ -291,15 +304,19 @@ $(document).on('click', '#no-room-check-box', function(){
     }else{
         $("#room-number").prop('disabled', false);
     }
+    $("#add-to-cart-product-barcode").focus();
 })
 
 $(document).on('click', '.submit-purchase-button', function(){
+    
     if($("#room-number").val() == null && !$("#no-room-check-box").is(':checked')){
+        $("#add-to-cart-product-barcode").focus();
         showError("Missing customer or room");
         return;
     }
 
     if($("#cart-tbody").children().length == 0){
+        $("#add-to-cart-product-barcode").focus();
         showError("Your cart is empty");
         return;
     }
@@ -334,6 +351,7 @@ function resetFields(){
     $(".total-quantity").text(0);
     $(".total-subtotal").text(0);
     inCart = [];
+    $("#add-to-cart-product-barcode").focus();
 }
 
 $(document).on('submit', '#to-submit-form', function(e){
@@ -351,6 +369,7 @@ $(document).on('submit', '#to-submit-form', function(e){
             }
 
             resetFields();
+
             
             showSuccess(data.message);
             
@@ -358,6 +377,10 @@ $(document).on('submit', '#to-submit-form', function(e){
         .catch(function (error) {
             showError(error.message);
         })
+})
+
+$(document).on('click', '.add-to-cart-button', function(){
+    $("#add-to-cart-product-barcode").focus();
 })
 </script>
 {% endblock %}
