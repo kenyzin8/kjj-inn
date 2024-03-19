@@ -27,6 +27,8 @@ function initializeTimer(element) {
 
     if(remainingTime === 'end'){
         $this.text("Waiting for check-out");
+        $this.removeClass('dark:text-[orange]');
+        $this.addClass('text-red-600');
         return;
     }
 
@@ -43,6 +45,8 @@ function initializeTimer(element) {
                 clearInterval(interval);
                 delete timers[customerId];
                 $this.text("Waiting for check-out");
+                $this.removeClass('dark:text-[orange]');
+                $this.addClass('text-red-600');
             }
 
         }, 1000);
@@ -195,7 +199,7 @@ $(document).on('submit', '#form-add-check-in', function(e) {
                                     </span>
                                     <p class="p-0">
                                         <button class="check-out-customer" data-customer-id="${customerId}" data-room-name="${response.data.data.room_number}">
-                                            <span class="text-xs font-semibold dark:text-[red] px-2.5 py-0.5 rounded dark:bg-gray-900 room-name">
+                                            <span class="text-xs font-semibold dark:text-red-600 px-2.5 py-0.5 rounded dark:bg-gray-900 room-name">
                                                 Check Out
                                                 <i class="fa-solid fa-caret-up"></i>
                                             </span>

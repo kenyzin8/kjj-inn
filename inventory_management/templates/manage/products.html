@@ -1,0 +1,186 @@
+{% extends 'admin-kjj/base.html' %}
+
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block content %}
+<div class="my-5">
+    <div class="mb-2">
+        <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <span class="font-semibold">Manage Products</span>
+            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                Browse existing products and manage them here.
+            </p>
+        </caption>
+    </div>
+    <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
+        <div>
+            <button id="add-product-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+                <i class="fa-solid fa-plus mr-1"></i> Add Product
+            </button>
+        </div>
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for products">
+        </div>
+    </div>
+    <div class="overflow-hidden">
+        <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
+            <table id="product-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Type
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="products-tbody">
+                    {% for product in products %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 product-row-{{ product.id }}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-index">
+                                {{ forloop.counter }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-name">
+                                {{ product.name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-type">
+                                {{ product.product_type.name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-product" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-type-id="{{ product.product_type.id }}">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-product" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                                <a href="{% url 'barcodes' %}?product={{ product.id }}" class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-product-barcodes">
+                                    <i class="fa-solid fa-barcode"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="add-product-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Add Product
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-add-product">
+                {% csrf_token %}
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <label for="add-product" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Name
+                        </label>
+                        <input type="text" name="product-name" id="add-product" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="add-product-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Product Type
+                        </label>
+                        <select name="product-type" id="add-product-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                            <option value="" selected disabled>Select Product Type</option>
+                            {% for type in product_types %}
+                            <option value="{{ type.id }}">{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Submit New Product
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+
+<div id="update-product-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Update Product
+                </h3>
+                <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                    <i class="fa-solid fa-x"></i>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form class="p-4 md:p-5" id="form-update-product">
+                {% csrf_token %}
+                <input type="hidden" name="product-id" id="update-product-id">
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <label for="update-product" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Name
+                        </label>
+                        <input type="text" name="product-name" id="update-product" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="update-product-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Product Type
+                        </label>
+                        <select name="product-type" id="update-product-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                            <option value="" selected disabled>Select Product Type</option>
+                            {% for type in product_types %}
+                            <option value="{{ type.id }}">{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
+                    <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
+                    Update Product
+                </button>
+            </form>
+        </div>
+    </div>
+</div> 
+{% endblock %}
+
+{% block scripts %}
+<script>
+const addProductURL = "{% url 'add-product' %}";
+const updateProductURL = "{% url 'update-product' %}";
+const deleteProductURL = "{% url 'delete-product' %}";
+var barcodesURL = "{% url 'barcodes' %}?product=0";
+</script>
+<script src="{% static 'js/products.js' %}"></script>
+{% endblock %}

@@ -140,6 +140,10 @@
             <i class="fa-solid fa-person-running"></i>
             CHECK OUT
         </button>
+        <a href="{% url 'store' %}?customer={{ customer.id }}" class="ms-2 focus:outline-none text-white bg-[green] hover:bg-green-800 font-bold rounded-md text-xs px-4 py-2.5">
+            <i class="fa-solid fa-store"></i>
+            TO STORE
+        </a>
         <button type="button" class="ms-2 focus:outline-none text-black bg-[orange] hover:bg-[#D18700] font-bold rounded-md text-xs px-4 py-2.5">
             <i class="fa-solid fa-print"></i>
             PRINT BILLING STATEMENT

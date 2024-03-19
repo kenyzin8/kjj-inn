@@ -104,7 +104,6 @@ function setupTableSearch(tableId, searchInputId) {
     noDataRow.style.display = 'none'; 
     const cell = noDataRow.insertCell();
 
-
     searchInput.addEventListener('keyup', function(e) {
         const searchValue = e.target.value.toLowerCase().trim().replace(/\u00A0/g, ' ').replace(/,/g, '');
         cell.innerHTML = `<div class="my-5 ms-2 font-semibold italic">Oops, no data available for ${e.target.value}<div>`;
@@ -128,9 +127,38 @@ function setupTableSearch(tableId, searchInputId) {
     });
 }
 
-
 function getCSRFTokenFromCookies(){
     const cookie = document.cookie;
     const csrfToken = cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
     return csrfToken;
 }
+
+let showColon = true;
+
+function updateTimer() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    const hoursAngle = ((hours % 12) + minutes / 60) * 30;
+    const minutesAngle = minutes * 6;
+
+    document.getElementById('hour-hand').style.transform = `rotate(${hoursAngle}deg)`;
+    document.getElementById('minute-hand').style.transform = `rotate(${minutesAngle}deg)`;
+
+    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+    let formattedDateTime = now.toLocaleString('en-US', options);
+    if (showColon) {
+        formattedDateTime = formattedDateTime.replace(/:/g, '<span>:</span>');
+    } else {
+        formattedDateTime = formattedDateTime.replace(/:/g, '<span style="visibility: hidden;">:</span>');
+    }
+    showColon = !showColon;
+
+    formattedDateTime = formattedDateTime.replace("at", "-");
+
+    document.querySelector('.timer-text').innerHTML = formattedDateTime;
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);

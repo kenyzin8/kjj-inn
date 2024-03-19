@@ -1,5 +1,5 @@
 {% with request.resolver_match.url_name as current_url_name %}
-<aside id="separator-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+<aside id="separator-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
     <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
             <li>
@@ -41,12 +41,12 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-inventory" data-collapse-toggle="dropdown-inventory" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-dolly"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Inventory</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != '#' and current_url_name != '#' %}rotate-90{% endif %} arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'product-types' and current_url_name != 'products' and current_url_name != 'barcodes' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-inventory" class="{% if current_url_name != '#' and current_url_name != '#' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-inventory" class="{% if current_url_name != 'product-types' and current_url_name != 'products' and current_url_name != 'barcodes' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == '#' %}
+                        <a href="{% url 'product-types' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'product-types' %}
                                                                     bg-[orange] text-black font-bold
                                                                 {% else %}
                                                                     text-white hover:bg-gray-700
@@ -55,8 +55,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == '#' %}
+                        <a href="{% url 'products' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'products' %}
                                                                     bg-[orange] text-black font-bold
                                                                 {% else %}
                                                                     text-white hover:bg-gray-700
@@ -65,8 +65,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == '#' %}
+                        <a href="{% url 'barcodes' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'barcodes' %}
                                                                     bg-[orange] text-black font-bold
                                                                 {% else %}
                                                                     text-white hover:bg-gray-700
@@ -178,6 +178,18 @@
                 </ul>
             </li>
         </ul>
+    </div>
+    <div class="w-full p-3">
+        <div class="flex justify-center items-center">
+            <svg class="text-gray-300 w-5 h-5 mr-1 clock-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line id="hour-hand" x1="12" y1="12" x2="12" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" transform-origin="12 12"/>
+                <line id="minute-hand" x1="12" y1="12" x2="12" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" transform-origin="12 12"/>
+            </svg>
+            <span class="text-gray-300 text-xs font-semibold timer-text">
+                March 05, 2022 - 12:00 PM
+            </span>
+        </div>
     </div>
 </aside>
 {% endwith %}

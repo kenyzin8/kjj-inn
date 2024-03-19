@@ -116,19 +116,19 @@
             </div>
             <div class="grid rounded-lg shadow-sm dark:border-gray-700 md:grid-cols-2 bg-white dark:bg-gray-800">
                 <figure class="flex flex-col items-center justify-center p-3 text-center bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-ss-lg md:border-e dark:bg-gray-800 dark:border-gray-700">
-                    <blockquote class="max-w-2xl mx-auto text-gray-500 dark:text-gray-400">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <blockquote class="max-w-2xl mx-auto">
+                        <h3 class="text-sm font-semibold text-gray-400">
                             Total Items
                         </h3>
-                        <p class="total-quantity">0</p>
+                        <p class="text-2xl font-bold total-quantity text-green-500">0</p>
                     </blockquote>  
                 </figure>
                 <figure class="flex flex-col items-center justify-center p-3 text-center bg-white border-b border-gray-200 md:rounded-se-lg dark:bg-gray-800 dark:border-gray-700">
-                    <blockquote class="max-w-2xl mx-auto text-gray-500 dark:text-gray-400">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <blockquote class="max-w-2xl mx-auto">
+                        <h3 class="text-sm font-semibold text-gray-400">
                             To Pay
                         </h3>
-                        <p class="total-subtotal">0</p>
+                        <p class="text-2xl font-bold total-subtotal text-green-500">0</p>
                     </blockquote>
                 </figure>
             </div>
@@ -138,11 +138,22 @@
         </div>
     </div>
 </div> 
+<audio id="beep-audio">
+    <source src="{% static 'audio/beep.mp3' %}" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 {% endblock %}
 
 {% block scripts %}
 <script>
 var inCart = [];
+
+function playBeepAudio(){
+    var beepAudio = $("#beep-audio")[0];
+    beepAudio.pause(); 
+    beepAudio.currentTime = 0; 
+    beepAudio.play(); 
+}
 
 function updateSubtotal(price_unformatted){
     var totalPriceDisplay = 0;
@@ -154,8 +165,43 @@ function updateSubtotal(price_unformatted){
     $(".total-subtotal").text(`₱ ${$(".subtotal-prices").length == 0 ? price_unformatted : totalPriceDisplay.toFixed(2)}`);
 }
 
+function resetFields(){
+    $("#add-to-cart-product-barcode").val('');
+    $("#add-to-cart-quantity-input").val(1);
+    $("#room-number").val('');
+    $("#room-number").trigger('change');
+    $("#no-room-check-box").prop('checked', false);
+    $("#room-number").prop('disabled', false);
+    $("#cart-tbody").empty();
+    $(".total-quantity").text(0);
+    $(".total-subtotal").text(0);
+    inCart = [];
+    $("#add-to-cart-product-barcode").focus();
+}
+
+function selectCustomerByURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('customer');
+
+    if (customerId) {
+        const exists = $("#room-number option[value='" + customerId + "']").length > 0;
+
+        if (exists) {
+            $("#room-number").val(customerId);
+            $("#no-room-check-box").prop('checked', false);
+        } else {
+            $("#room-number").val('');
+            urlParams.delete('customer');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        $("#room-number").trigger('change');
+    }
+}
+
 $(document).ready(function(){
     $("#add-to-cart-product-barcode").focus();
+
+    selectCustomerByURL();
 })
 
 $(document).on('submit', '#add-to-cart-form', function(e){
@@ -192,6 +238,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
         updateSubtotal(data.price_unformatted);
 
         $("#add-to-cart-product-barcode").val('');
+
+        playBeepAudio();
 
         if(inCart.includes(data.identifier)){
             $(`#product-${data.identifier}`).val(currentQuantity + parseInt(quantity));
@@ -340,20 +388,6 @@ $(document).on('click', '.submit-purchase-button', function(){
     
 })
 
-function resetFields(){
-    $("#add-to-cart-product-barcode").val('');
-    $("#add-to-cart-quantity-input").val(1);
-    $("#room-number").val('');
-    $("#room-number").trigger('change');
-    $("#no-room-check-box").prop('checked', false);
-    $("#room-number").prop('disabled', false);
-    $("#cart-tbody").empty();
-    $(".total-quantity").text(0);
-    $(".total-subtotal").text(0);
-    inCart = [];
-    $("#add-to-cart-product-barcode").focus();
-}
-
 $(document).on('submit', '#to-submit-form', function(e){
     e.preventDefault();
     const form = $(this);
@@ -380,6 +414,10 @@ $(document).on('submit', '#to-submit-form', function(e){
 })
 
 $(document).on('click', '.add-to-cart-button', function(){
+    $("#add-to-cart-product-barcode").focus();
+})
+
+$(document).on('keydown', 'html', function(e){
     $("#add-to-cart-product-barcode").focus();
 })
 </script>

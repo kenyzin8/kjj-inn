@@ -51,6 +51,8 @@ function initializeTimer(element) {
         $('.time-progress').text('100%');
         $('.time-progress').addClass('bg-red-700');
         $('.time-progress').css('color', `white`);
+        $this.removeClass('dark:text-[orange]');
+        $this.addClass('text-red-600');
         return;
     }
 
@@ -77,6 +79,8 @@ function initializeTimer(element) {
                 $this.text("Waiting for check-out");
                 $('.time-progress').addClass('bg-red-700');
                 $('.time-progress').css('color', `white`);
+                $this.removeClass('dark:text-[orange]');
+                $this.addClass('text-red-600');
             }
 
         }, 1000);

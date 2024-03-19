@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Manage Buildings{% endblock %}
+{% block title %}Product Types{% endblock %}
 
 {% block styles %}
 {% endblock %}
@@ -11,16 +11,16 @@
 <div class="my-5">
     <div class="mb-2">
         <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-            <span class="font-semibold">Manage Buildings</span>
+            <span class="font-semibold">Manage Product Types</span>
             <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                Browse existing buildings and manage them here.
+                Browse existing product types and manage them here.
             </p>
         </caption>
     </div>
     <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
         <div>
-            <button id="add-building-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
-                <i class="fa-solid fa-plus mr-1"></i> Add Building
+            <button id="add-product-type-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+                <i class="fa-solid fa-plus mr-1"></i> Add Product Type
             </button>
         </div>
         <label for="table-search" class="sr-only">Search</label>
@@ -28,58 +28,44 @@
             <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                 <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
             </div>
-            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for buildings">
+            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for product types">
         </div>
     </div>
     <div class="overflow-hidden">
         <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
-            <table id="building-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table id="product-type-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             #
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Building Name
+                            Name
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Rooms
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Actions
+                            Action
                         </th>
                     </tr>
                 </thead>
-                <tbody class="buildings-tbody">
-                    {% for building in buildings %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 building-row-{{ building.id }}">
+                <tbody class="product-types-tbody">
+                    {% for type in product_types %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 product-type-row-{{ type.id }}">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] building-index">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-type-index">
                                 {{ forloop.counter }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] building-name">
-                                {{ building.name }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-type-name">
+                                {{ type.name}}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {% for room in building.get_rooms %}
-                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] ">
-                                    {{ room.get_room|safe }}
-                                </span>
-                            {% empty %}
-                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] ">
-                                    No rooms
-                                </span>
-                            {% endfor %}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-building" data-building-id="{{ building.id }}" data-building-name="{{ building.name }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-product-type" data-product-type-id="{{ type.id }}" data-product-type-name="{{ type.name }}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-building" data-building-id="{{ building.id }}" data-building-name="{{ building.name }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-product-type" data-product-type-id="{{ type.id }}" data-product-type-name="{{ type.name }}">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </span>
@@ -92,63 +78,63 @@
     </div>
 </div>
 
-<div id="add-building-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="add-product-type-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Add Building
+                    Add Product Type
                 </h3>
                 <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-add-buildings">
+            <form class="p-4 md:p-5" id="form-add-product-type">
                 {% csrf_token %}
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
-                        <label for="building-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Building Name
+                        <label for="add-product-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Name
                         </label>
-                        <input type="text" name="building-name" id="building-name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="text" name="product-type" id="add-product-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
                     </div>
                 </div>
                 <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
                     <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
-                    Submit New Building
+                    Submit New Product Type
                 </button>
             </form>
         </div>
     </div>
 </div> 
 
-<div id="update-building-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="update-product-type-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Update Building
+                    Update Product Type
                 </h3>
                 <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-update-buildings">
+            <form class="p-4 md:p-5" id="form-update-product-type">
                 {% csrf_token %}
-                <input type="hidden" name="building-id" id="building-id-update">
+                <input type="hidden" name="product-type-id" id="update-product-type-id">
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
-                        <label for="building-name-update" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Building Name
+                        <label for="update-product-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Name
                         </label>
-                        <input type="text" name="building-name" id="building-name-update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="text" name="product-type" id="update-product-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
                     </div>
                 </div>
                 <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
                     <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
-                    Update Building
+                    Update Product Type
                 </button>
             </form>
         </div>
@@ -158,9 +144,9 @@
 
 {% block scripts %}
 <script>
-const addBuildingURL = "{% url 'add-building' %}";
-const updateBuildingURL = "{% url 'update-building' %}";
-const deleteBuildingURL = "{% url 'delete-building' %}";
+const addProductTypeURL = "{% url 'add-product-type' %}";
+const updateProductTypeURL = "{% url 'update-product-type' %}";
+const deleteProductTypeURL = "{% url 'delete-product-type' %}";
 </script>
-<script src="{% static 'js/buildings.js' %}"></script>
+<script src="{% static 'js/product_types.js' %}"></script>
 {% endblock %}

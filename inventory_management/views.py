@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db import transaction
 import json
 import uuid
+from django.db.models.functions import Lower, Trim
 
 def store(request):
     products = Product.objects.all()
@@ -105,3 +106,279 @@ def submit_purchase(request):
         return JsonResponse({'success': False, 'message': str(e)})
 
     return JsonResponse({'success': True, 'message': f'{purchase.get_purchase_number()} submitted successfully'})
+
+@login_required
+@staff_required
+def manage_product_types(request):
+    product_types = ProductType.objects.filter(is_active=True).order_by('name')
+
+    context = {
+        'product_types': product_types
+    }
+
+    return render(request, 'manage/product_types.html', context)
+
+@login_required
+@staff_required
+def add_product_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    name = request.POST.get('product-type')
+
+    if not name:
+        return JsonResponse({'success': False, 'message': 'Invalid name'})
+
+    trimmed_name = name.strip().lower()
+
+    exist = ProductType.objects.annotate(
+        trimmed_name=Lower(Trim('name'))
+    ).filter(
+        trimmed_name=trimmed_name
+    ).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Product type already exists', 'product_type_exists': True})
+
+    try:
+        product_type = ProductType.objects.create(name=name)
+        data = {
+            'id': product_type.id,
+            'name': product_type.name
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product type added successfully', 'data': data})
+
+@login_required
+@staff_required
+def update_product_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    product_type_id = request.POST.get('product-type-id')
+    name = request.POST.get('product-type')
+
+    if not product_type_id or not name:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    trimmed_name = name.strip().lower()
+
+    exist = ProductType.objects.annotate(
+        trimmed_name=Lower(Trim('name'))
+    ).filter(
+        trimmed_name=trimmed_name
+    ).exclude(
+        id=product_type_id
+    ).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Product type already exists', 'product_type_exists': True})
+
+    product_type = get_object_or_404(ProductType, id=product_type_id)
+
+    try:
+        product_type.name = name
+        product_type.save()
+        data = {
+            'id': product_type.id,
+            'name': product_type.name
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product type updated successfully', 'data': data})
+
+@login_required
+@staff_required
+def delete_product_type(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    body = json.loads(request.body)
+    product_type_id = body.get('id')
+
+    if not product_type_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    product_type = get_object_or_404(ProductType, id=product_type_id)
+
+    try:
+        product_type.is_active = False
+        product_type.save()
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product type deleted successfully'})
+
+@login_required
+@staff_required
+def manage_products(request):
+    products = Product.objects.filter(is_active=True).order_by('name')
+    product_types = ProductType.objects.filter(is_active=True).order_by('name')
+
+    context = {
+        'products': products,
+        'product_types': product_types
+    }
+
+    return render(request, 'manage/products.html', context)
+
+@login_required
+@staff_required
+def add_product(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    name = request.POST.get('product-name')
+    product_type_id = request.POST.get('product-type')
+
+    if not name or not product_type_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    trimmed_name = name.strip().lower()
+
+    exist = Product.objects.annotate(
+        trimmed_name=Lower(Trim('name'))
+    ).filter(
+        trimmed_name=trimmed_name, 
+        product_type_id=product_type_id
+    ).exists()
+
+    print(name, trimmed_name, product_type_id, exist)
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Product already exists', 'product_exists': True})
+
+    product_type = get_object_or_404(ProductType, id=product_type_id)
+
+    try:
+        product = Product.objects.create(name=name, product_type=product_type)
+        data = {
+            'id': product.id,
+            'name': product.name,
+            'product_type': product.product_type.name
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product added successfully', 'data': data})
+
+@login_required
+@staff_required
+def update_product(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    product_id = request.POST.get('product-id')
+    name = request.POST.get('product-name')
+    product_type_id = request.POST.get('product-type')
+
+    if not product_id or not name or not product_type_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    trimmed_name = name.strip().lower()
+
+    exist = Product.objects.annotate(
+        trimmed_name=Lower(Trim('name'))
+    ).filter(
+        trimmed_name=trimmed_name, 
+        product_type_id=product_type_id
+    ).exclude(
+        id=product_id
+    ).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Product already exists', 'product_exists': True})
+
+    product = get_object_or_404(Product, id=product_id)
+    product_type = get_object_or_404(ProductType, id=product_type_id)
+
+    try:
+        product.name = name
+        product.product_type = product_type
+        product.save()
+        data = {
+            'id': product.id,
+            'name': product.name,
+            'product_type': product.product_type.name,
+            'product_type_id': product.product_type.id
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product updated successfully', 'data': data})
+
+@login_required
+@staff_required
+def delete_product(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    body = json.loads(request.body)
+    product_id = body.get('id')
+
+    if not product_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    product = get_object_or_404(Product, id=product_id)
+
+    try:
+        product.is_active = False
+        product.save()
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Product deleted successfully'})
+
+@login_required
+@staff_required
+def manage_barcodes(request):
+    barcodes = Barcode.objects.filter(is_active=True).order_by('barcode')
+    products = Product.objects.filter(is_active=True).order_by('name')
+
+    context = {
+        'barcodes': barcodes,
+        'products': products
+    }
+
+    return render(request, 'manage/barcodes.html', context)
+
+@login_required
+@staff_required
+def add_barcode(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    barcode = request.POST.get('barcode')
+    product_id = request.POST.get('product')
+
+    if not barcode or not product_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    trimmed_barcode = barcode.strip().lower()
+
+    exist = Barcode.objects.annotate(
+        trimmed_barcode=Lower(Trim('barcode'))
+    ).filter(
+        trimmed_barcode=trimmed_barcode
+    ).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Barcode already exists', 'barcode_exists': True})
+
+    product = get_object_or_404(Product, id=product_id)
+
+    try:
+        barcode = Barcode.objects.create(barcode=barcode, product=product)
+        data = {
+            'id': barcode.id,
+            'barcode': barcode.barcode,
+            'product': barcode.product.name,
+            'product_id': barcode.product.id
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Barcode added successfully', 'data': data})

@@ -21,7 +21,6 @@
     <script src="{% static 'tailwind/tailwind.js' %}"></script>
     <script src="{% static 'flowbite/flowbite.min.js' %}"></script>
     <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
-    <script src="{% static 'js/base.js' %}"></script>
     <script src="{% static 'select2/select2.js' %}"></script>
     <script src="{% static 'axios/axios.js' %}"></script>
     <script src="{% static 'datatables/datatables.js' %}"></script>
@@ -41,6 +40,8 @@
         </div>
     </main>
     {% include 'admin-kjj/modal.html' %}
+
+    <script src="{% static 'js/base.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
