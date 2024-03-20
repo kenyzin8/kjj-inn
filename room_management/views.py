@@ -4,9 +4,11 @@ from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from core.decorators import staff_required
-
+from inventory_management.models import Purchase, PurchaseItem
+from collections import defaultdict
 import json
 import uuid
+
 
 @staff_required
 @login_required
@@ -611,13 +613,23 @@ def view_check_in_summary(request, customer_slug):
     if not customer or not customer.is_active:
         return redirect('customer-check-in')
 
-    total_price = customer.get_extra_bed_price_unformatted() + customer.get_room_price_unformatted()
-    total_quantity = customer.extra_bed + 1
+    purchases = Purchase.objects.filter(customer=customer, is_active=True).order_by('-created_at')
+    purchase_items = PurchaseItem.objects.filter(purchase__in=purchases, is_active=True).order_by('created_at')
+
+    total_purchase = 0
+    for purchase_item in purchase_items:
+        total_purchase += purchase_item.price_at_purchase * purchase_item.quantity
+        purchase_item.total = f"₱&nbsp;{(purchase_item.price_at_purchase * purchase_item.quantity):,.2f}"
+
+    total_price = customer.get_extra_bed_price_unformatted() + customer.get_room_price_unformatted() + total_purchase
+    total_quantity = customer.extra_bed + 1 + sum([item.quantity for item in purchase_items])
 
     customer.total_price = f"₱&nbsp;{total_price:,.2f}"
     customer.total_quantity = total_quantity
     customer.grand_total =  f"₱&nbsp;{(total_price - customer.amount_paid):,.2f}"
     customer.grand_total_unformatted = total_price - customer.amount_paid
+
+    extra_bed = ExtraBedPrice.objects.first()
 
     breadcrumbs = [
         ('Dashboard', '/dashboard/'),
@@ -627,6 +639,9 @@ def view_check_in_summary(request, customer_slug):
 
     context = {
         'customer': customer,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'purchases': purchases,
+        'purchase_items': purchase_items,
+        'extra_bed': extra_bed,
     }
     return render(request, 'check-in/view-check-in-summary.html', context)

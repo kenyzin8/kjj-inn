@@ -15,4 +15,10 @@ urlpatterns = [
     path('inventory/products/delete/', views.delete_product, name='delete-product'),
     path('inventory/barcodes/', views.manage_barcodes, name='barcodes'),
     path('inventory/barcodes/add/', views.add_barcode, name='add-barcode'),
+    path('inventory/barcodes/update/', views.update_barcode, name='update-barcode'),
+    path('inventory/barcodes/delete/', views.delete_barcode, name='delete-barcode'),
+    path('inventory/stocks/', views.manage_stocks, name='stocks'),
+    path('inventory/stocks/add/', views.add_stock, name='add-stock'),
+    path('inventory/stocks/update/', views.update_stock, name='update-stock'),
+    path('inventory/stocks/delete/', views.delete_stock, name='delete-stock'),
 ]

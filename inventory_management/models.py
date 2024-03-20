@@ -65,6 +65,7 @@ class Stock(models.Model):
         return f"{self.product.name} - {self.quantity}"
 
     def get_price(self):
+        print(self.price)
         return f"₱&nbsp;{self.price:,.2f}"
 
     def save(self, *args, **kwargs):
@@ -91,8 +92,17 @@ class Purchase(models.Model):
     is_active = models.BooleanField(default=True)
 
     def get_purchase_number(self):
-        # if id is 1 return 000-001
         return f"{str(self.id).zfill(3)}"
+
+    def get_total(self):
+        total = 0
+        for item in self.purchased_items.all():
+            total += item.stock.price * item.quantity
+
+        return f"₱&nbsp;{total:,.2f}"
+
+    def get_created_at(self):
+        return self.created_at.strftime("%B %d, %Y - %I:%M %p")
 
     def __str__(self):
         if self.is_walk_in:
@@ -108,12 +118,24 @@ class PurchaseItem(models.Model):
     purchase = models.ForeignKey(Purchase, related_name='purchased_items', on_delete=models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+
+    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.stock.product.name} - {self.quantity}"
+
+    def get_price_at_purchase(self):
+        return f"₱&nbsp;{self.price_at_purchase:,.2f}"
+
+    def save(self, *args, **kwargs):
+        if not self.price_at_purchase:
+            self.price_at_purchase = self.stock.price
+        
+        super(PurchaseItem, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Purchase Item"

@@ -35,6 +35,12 @@
                             Particulars
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Date Purchased
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Price
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Quantity
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -47,6 +53,16 @@
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
                                 {{ customer.room.get_room|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ customer.get_formatted_check_in_date|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ customer.get_room_price|safe }}
                             </span>
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
@@ -68,6 +84,16 @@
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ customer.get_formatted_check_in_date|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ extra_bed.get_price|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
                                 {{ customer.extra_bed }}
                             </span>
                         </td>
@@ -77,10 +103,39 @@
                             </span>
                         </td>
                     </tr>
+                    {% for item in purchase_items %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ item.stock.product.name }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ item.purchase.get_created_at|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ item.get_price_at_purchase|safe }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ item.quantity }}
+                            </span>
+                        </td>
+                        <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
+                                {{ item.total|safe }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr class="text-gray-400 bg-gray-700 border-t-4 border-gray-900">
-                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap">
+                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap" colspan="3">
                             <span class="font-medium px-2.5 py-0.5 text-sm">
                                 Total Gross
                             </span>
@@ -97,7 +152,7 @@
                         </td>
                     </tr>
                     <tr class="text-gray-300 bg-gray-700">
-                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap">
+                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap" colspan="3">
                             <span class="font-medium px-2.5 py-0.5 text-sm">
                                 Amount Paid
                             </span>
@@ -111,7 +166,7 @@
                         </td>
                     </tr>
                     <tr class="text-white bg-gray-700 border-t-2 border-gray-900">
-                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap">
+                        <th scope="row" class="px-6 py-1 text-base whitespace-nowrap" colspan="3">
                             <span class="font-medium px-2.5 py-0.5">
                                 Grand Total
                             </span>

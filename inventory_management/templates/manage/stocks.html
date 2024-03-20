@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Barcodes{% endblock %}
+{% block title %}Stocks{% endblock %}
 
 {% block styles %}
 <style>
@@ -82,16 +82,16 @@
 <div class="my-5">
     <div class="mb-2">
         <caption class="p-5 text-lg text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-            <span class="font-semibold">Manage Barcodes</span>
+            <span class="font-semibold">Manage Stocks</span>
             <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                Browse existing barcodes and manage them here.
+                Browse existing stocks and manage them here.
             </p>
         </caption>
     </div>
     <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 ">
         <div>
-            <button id="add-barcode-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
-                <i class="fa-solid fa-plus mr-1"></i> Add Barcode
+            <button id="add-stock-button" class="inline-flex items-center text-gray-500 bg-white hover:bg-[#D18700] font-medium rounded-md text-sm px-3 py-1.5 dark:bg-[orange] dark:text-black" type="button">
+                <i class="fa-solid fa-plus mr-1"></i> Add Stock
             </button>
         </div>
         <label for="table-search" class="sr-only">Search</label>
@@ -99,53 +99,64 @@
             <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                 <i class="fa-solid fa-magnifying-glass w-4 h-4 text-gray-500 dark:text-gray-400"></i>
             </div>
-            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for barcodes">
+            <input type="text" id="table-search" class="table-search block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for stocks">
         </div>
     </div>
     <div class="overflow-hidden">
         <div class="relative overflow-x-auto bg-gray-800 rounded-lg p-3">
-            <table id="barcode-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table id="stock-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             #
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Barcode
+                            Product
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Product
+                            Quantity
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Price
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Action
                         </th>
                     </tr>
                 </thead>
-                <tbody class="barcodes-tbody">
-                    {% for barcode in barcodes %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 barcode-row-{{ barcode.id }}">
+                <tbody class="stocks-tbody">
+                    {% for stock in stocks %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 stock-row-{{ stock.id }}">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-index">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] stock-index">
                                 {{ forloop.counter }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-name">
-                                {{ barcode.barcode }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] stock-name">
+                                {{ stock.product.name }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-product">
-                                {{ barcode.product.name }}
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] stock-quantity">
+                                {{ stock.quantity }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] stock-price">
+                                {{ stock.get_price|safe }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-barcode" data-barcode-id="{{ barcode.id }}" data-barcode-name="{{ barcode.barcode }}" data-product-name="{{ barcode.product.name }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] cursor-pointer button-update-stock" data-stock-id="{{ stock.id }}" data-product-id="{{ stock.product.id }}" data-stock-quantity="{{ stock.quantity }}" data-stock-price="{{ stock.price }}">
                                     <i class="fa-solid fa-gear"></i>
                                 </a>
-                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-barcode" data-barcode-id="{{ barcode.id }}" data-barcode-name="{{ barcode.barcode }}" data-product-id="{{ barcode.product.id }}">
+                                <a class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-delete-stock" data-stock-id="{{ stock.id }}" data-product-name="{{ stock.product.name }}">
                                     <i class="fa-solid fa-trash"></i>
+                                </a>
+                                <a href="{% url 'barcodes' %}?product={{ stock.product.id }}" class="font-medium text-blue-600 dark:text-[orange] hover:text-[#D18700] ml-1 cursor-pointer button-product-barcodes">
+                                    <i class="fa-solid fa-barcode"></i>
                                 </a>
                             </span>
                         </td>
@@ -157,19 +168,19 @@
     </div>
 </div>
 
-<div id="add-barcode-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="add-stock-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    <i class="fa-solid fa-barcode"></i> Add Barcode
+                    Add Stock
                 </h3>
                 <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-add-barcode">
+            <form class="p-4 md:p-5" id="form-add-stock">
                 {% csrf_token %}
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
@@ -184,65 +195,70 @@
                         </select>
                     </div>
                     <div class="col-span-2">
-                        <label for="add-barcode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Barcode
+                        <label for="add-quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Quantity
                         </label>
-                        <input type="text" name="barcode" id="add-barcode" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="number" min="1" name="quantity" id="add-quantity" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="add-price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Price
+                        </label>
+                        <input type="number" min="1" step=".01" name="price" id="add-price" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
                     </div>
                 </div>
                 <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
                     <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
-                    Submit New Barcode
+                    Submit New Stock
                 </button>
-                <div class="relative overflow-x-auto bg-gray-900 rounded-lg p-3 mt-2 max-h-80">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 submitted-barcodes">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <th class="px-6 py-4 whitespace-nowrap">Product</th>
-                                <th class="px-6 py-4 whitespace-nowrap">Barcode</th>
-                            </tr>
-                        </thead>
-                        <tbody class="submitted-barcodes-tbody">
-                        </tbody>
-                    </table>
-                </div>
             </form>
         </div>
     </div>
 </div> 
 
-<div id="update-barcode-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="update-stock-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Update Product Type
+                    Update Product
                 </h3>
                 <button type="button" class="close-modal-button text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <i class="fa-solid fa-x"></i>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="p-4 md:p-5" id="form-update-barcode">
+            <form class="p-4 md:p-5" id="form-update-stock">
                 {% csrf_token %}
-                <input type="hidden" name="barcode-id" id="update-barcode-id">
+                <input type="hidden" name="stock-id" id="update-stock-id">
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
-                        <label for="display-product" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <label for="update-product" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Product
                         </label>
-                        <input type="text" id="display-product" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" disabled>
+                        <select name="product" id="update-product" disabled>
+                            <option value="" selected disabled>Select Product</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="col-span-2">
-                        <label for="update-barcode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Barcode
+                        <label for="update-quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Quantity
                         </label>
-                        <input type="text" name="barcode" id="update-barcode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                        <input type="number" min="1" name="quantity" id="update-quantity" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="col-span-2">
+                        <label for="update-price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Price
+                        </label>
+                        <input type="number" min="1" step=".01" name="price" id="update-price" autocomplete="off" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-700 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-700 dark:placeholder-gray-700 dark:text-white" required>
                     </div>
                 </div>
                 <button type="submit" class="text-black inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-[orange] font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-[orange] dark:hover:bg-[#D18700]">
                     <i class="fa-solid fa-plus me-1 -ms-1 w-5 h-5"></i>
-                    Update Barcode
+                    Update Stock
                 </button>
             </form>
         </div>
@@ -252,9 +268,10 @@
 
 {% block scripts %}
 <script>
-const addBarcodeURL = "{% url 'add-barcode' %}";
-const updateBarcodeURL = "{% url 'update-barcode' %}";
-const deleteBarcodeURL = "{% url 'delete-barcode' %}";
+const addStockURL = "{% url 'add-stock' %}";
+const barcodesURL = "{% url 'barcodes' %}";
+const updateStockURL = "{% url 'update-stock' %}";
+const deleteStockURL = "{% url 'delete-stock' %}";
 </script>
-<script src="{% static 'js/barcodes.js' %}"></script>
+<script src="{% static 'js/stocks.js' %}"></script>
 {% endblock %}

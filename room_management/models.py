@@ -215,6 +215,9 @@ class ExtraBedPrice(models.Model):
     def __str__(self):
         return f"₱{self.price:,.2f}"
 
+    def get_price(self):
+        return f"₱&nbsp;{self.price:,.2f}"
+
     def get_updated_at(self):
         self.updated_at = timezone.localtime(self.updated_at)
         return self.updated_at.strftime("%B %d, %Y - %I:%M %p")

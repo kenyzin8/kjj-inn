@@ -382,3 +382,165 @@ def add_barcode(request):
         return JsonResponse({'success': False, 'message': str(e)})
 
     return JsonResponse({'success': True, 'message': f'Barcode added successfully', 'data': data})
+
+@login_required
+@staff_required
+def update_barcode(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    barcode_id = request.POST.get('barcode-id')
+    new_barcode = request.POST.get('barcode')
+
+    if not barcode_id or not new_barcode:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    trimmed_barcode = new_barcode.strip().lower()
+
+    exist = Barcode.objects.annotate(
+        trimmed_barcode=Lower(Trim('barcode'))
+    ).filter(
+        trimmed_barcode=trimmed_barcode
+    ).exclude(
+        id=barcode_id
+    ).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Barcode already exists', 'barcode_exists': True})
+
+    barcode = get_object_or_404(Barcode, id=barcode_id)
+
+    try:
+        barcode.barcode = new_barcode
+        barcode.save()
+        data = {
+            'id': barcode.id,
+            'barcode': barcode.barcode,
+            'product': barcode.product.name,
+            'product_id': barcode.product.id
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Barcode updated successfully', 'data': data})
+
+@login_required
+@staff_required
+def delete_barcode(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    body = json.loads(request.body)
+    barcode_id = body.get('id')
+
+    if not barcode_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    barcode = get_object_or_404(Barcode, id=barcode_id)
+
+    try:
+        barcode.is_active = False
+        barcode.save()
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Barcode deleted successfully'})
+
+@login_required
+@staff_required
+def manage_stocks(request):
+    stocks = Stock.objects.filter(is_active=True).order_by('product__name')
+    products = Product.objects.filter(is_active=True).order_by('name')
+
+    context = {
+        'stocks': stocks,
+        'products': products
+    }
+
+    return render(request, 'manage/stocks.html', context)
+
+@login_required
+@staff_required
+def add_stock(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    product_id = request.POST.get('product')
+    quantity = request.POST.get('quantity')
+    price = request.POST.get('price')
+
+    if not product_id or not quantity or not price:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    product = get_object_or_404(Product, id=product_id)
+
+    exist = Stock.objects.filter(product=product, is_active=True).exists()
+
+    if exist:
+        return JsonResponse({'success': False, 'message': 'Stock already exists', 'stock_exists': True})
+    
+    stock = Stock.objects.create(product=product, quantity=int(quantity), price=float(price))
+    data = {
+        'id': stock.id,
+        'product': stock.product.name,
+        'product_id': stock.product.id,
+        'quantity': stock.quantity,
+        'price': str(stock.get_price()),
+        'price_unformatted': stock.price
+    }
+
+    return JsonResponse({'success': True, 'message': f'Stock added successfully', 'data': data})
+
+@login_required
+@staff_required
+def update_stock(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    stock_id = request.POST.get('stock-id')
+    quantity = request.POST.get('quantity')
+    price = request.POST.get('price')
+
+    if not stock_id or not quantity or not price:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    stock = get_object_or_404(Stock, id=stock_id)
+
+    try:
+        stock.quantity = int(quantity)
+        stock.price = float(price)
+        stock.save()
+        data = {
+            'id': stock.id,
+            'product': stock.product.name,
+            'product_id': stock.product.id,
+            'quantity': stock.quantity,
+            'price': str(stock.get_price()),
+            'price_unformatted': stock.price
+        }
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Stock updated successfully', 'data': data})
+
+@login_required
+@staff_required
+def delete_stock(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    body = json.loads(request.body)
+    stock_id = body.get('id')
+
+    if not stock_id:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+    stock = get_object_or_404(Stock, id=stock_id)
+
+    try:
+        stock.is_active = False
+        stock.save()
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': True, 'message': f'Stock deleted successfully'})
