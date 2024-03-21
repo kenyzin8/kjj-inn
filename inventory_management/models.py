@@ -97,7 +97,7 @@ class Purchase(models.Model):
     def get_total(self):
         total = 0
         for item in self.purchased_items.all():
-            total += item.stock.price * item.quantity
+            total += item.price_at_purchase * item.quantity
 
         return f"₱&nbsp;{total:,.2f}"
 
@@ -130,6 +130,9 @@ class PurchaseItem(models.Model):
 
     def get_price_at_purchase(self):
         return f"₱&nbsp;{self.price_at_purchase:,.2f}"
+
+    def get_total(self):
+        return f"₱&nbsp;{self.price_at_purchase * self.quantity:,.2f}"
 
     def save(self, *args, **kwargs):
         if not self.price_at_purchase:

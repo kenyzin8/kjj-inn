@@ -62,7 +62,7 @@
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                {{ customer.get_room_price|safe }}
+                                {{ customer.fee.get_amount|safe }}
                             </span>
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
@@ -72,7 +72,7 @@
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                {{ customer.get_room_price|safe }}
+                                {{ customer.fee.get_amount|safe }}
                             </span>
                         </td>
                     </tr>
@@ -89,7 +89,7 @@
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                {{ extra_bed.get_price|safe }}
+                                {{ customer.get_extra_bed_price|safe }}
                             </span>
                         </td>
                         <td scope="row" class="px-6 py-4 whitespace-nowrap">

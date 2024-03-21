@@ -103,9 +103,9 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-manage" data-collapse-toggle="dropdown-manage" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-gear text-gray-400"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Manage</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' %}rotate-90{% endif %} arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
                     <li>
                         <a href="{% url 'manage-fees' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
                                                                 {% if current_url_name == 'manage-fees' %}
@@ -147,8 +147,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == '#' %}
+                        <a href="{% url 'manage-extra-bed' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-extra-bed' %}
                                                                     bg-[orange] text-black font-bold
                                                                 {% else %}
                                                                     text-white hover:bg-gray-700
@@ -162,11 +162,16 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-reports" data-collapse-toggle="dropdown-reports" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-paperclip"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Reports</span>
-                    <i class="fa-solid fa-chevron-down rotate-90 arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'sales' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-reports" class="hidden py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-reports" class="{% if current_url_name != 'sales' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                        <a href="{% url 'sales' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'sales' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
                             Sales
                         </a>
                     </li>

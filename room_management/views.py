@@ -621,7 +621,7 @@ def view_check_in_summary(request, customer_slug):
         total_purchase += purchase_item.price_at_purchase * purchase_item.quantity
         purchase_item.total = f"₱&nbsp;{(purchase_item.price_at_purchase * purchase_item.quantity):,.2f}"
 
-    total_price = customer.get_extra_bed_price_unformatted() + customer.get_room_price_unformatted() + total_purchase
+    total_price = customer.get_extra_bed_price_unformatted() + customer.fee.amount + total_purchase
     total_quantity = customer.extra_bed + 1 + sum([item.quantity for item in purchase_items])
 
     customer.total_price = f"₱&nbsp;{total_price:,.2f}"
@@ -645,3 +645,43 @@ def view_check_in_summary(request, customer_slug):
         'extra_bed': extra_bed,
     }
     return render(request, 'check-in/view-check-in-summary.html', context)
+
+@staff_required
+@login_required
+def manage_extra_bed(request):
+    extra_bed = ExtraBedPrice.objects.first()
+
+    breadcrumbs = [
+        ('Dashboard', '/dashboard/'),
+        ('Manage Extra Bed', None), 
+    ]
+
+    context = {
+        'extra_bed': extra_bed,
+        'breadcrumbs': breadcrumbs,
+    }
+    return render(request, 'manage/extra_bed.html', context)
+
+@staff_required
+@login_required
+def update_extra_bed(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    extra_bed_id = request.POST.get('extra-bed-id')
+    price = request.POST.get('extra-bed-fee')
+
+    if not price:
+        return JsonResponse({'success': False, 'message': 'Price is required'})
+
+    extra_bed = ExtraBedPrice.objects.filter(id=extra_bed_id).first()
+    extra_bed.price = float(price)
+    extra_bed.save()
+
+    data = {
+        'id': extra_bed.id,
+        'price': extra_bed.get_price(),
+        'price_unformatted': extra_bed.price,
+    }
+
+    return JsonResponse({'success': True, 'message': 'Extra bed price updated successfuly', 'data': data})

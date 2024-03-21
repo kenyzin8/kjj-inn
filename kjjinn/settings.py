@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'core',
     'room_management',
     'inventory_management',
+    'reports',
 ]
 
 MIDDLEWARE = [

@@ -63,6 +63,26 @@ $(document).ready(function() {
     $(".remaining-time").each(function() {
         initializeTimer(this);
     });
+
+    $("#select-room").select2({
+        placeholder: "Select a room",
+        allowClear: true,
+    });
+
+    $(".select2-container").addClass("bg-gray-50");
+    $(".select2-container").addClass("border");
+    $(".select2-container").addClass("border-gray-300");
+    $(".select2-container").addClass("text-gray-900");
+    $(".select2-container").addClass("text-sm");
+    $(".select2-container").addClass("rounded-lg");
+    $(".select2-container").addClass("focus:ring-gray-700");
+    $(".select2-container").addClass("block");
+    $(".select2-container").addClass("w-full");
+    $(".select2-container").addClass("p-2.5");
+    $(".select2-container").addClass("dark:bg-gray-700");
+    $(".select2-container").addClass("dark:border-gray-700");
+    $(".select2-container").addClass("dark:placeholder-gray-700");
+    $(".select2-container").addClass("dark:text-white");
 });
 
 $(document).on('click', '.check-out-customer', function(e) {

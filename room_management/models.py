@@ -53,6 +53,7 @@ class Fee(models.Model):
         return a
 
     def get_amount(self):
+        self.amount = float(self.amount)
         self.amount = f"{self.amount:,.2f}"
         return f"₱&nbsp;{self.amount}"
 
@@ -135,6 +136,7 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     price_at_check_in = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    extra_bed_price_at_check_in = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     plate_number = models.CharField(max_length=10, blank=True, null=True)
     extra_bed = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -145,8 +147,7 @@ class Customer(models.Model):
         return f"{self.room.building.name} - {self.room.room_number} - {self.check_in_date} - {self.check_out_date}"
 
     def get_extra_bed_price(self):
-        extra_bed_price = ExtraBedPrice.objects.first()
-        total = self.extra_bed * extra_bed_price.price
+        total = self.extra_bed * self.extra_bed_price_at_check_in
         return f"₱&nbsp;{total:,.2f}"
 
     def get_room_price(self):
@@ -156,8 +157,7 @@ class Customer(models.Model):
         return f"₱&nbsp;{self.amount_paid:,.2f}"
 
     def get_extra_bed_price_unformatted(self):
-        extra_bed_price = ExtraBedPrice.objects.first()
-        total = self.extra_bed * extra_bed_price.price
+        total = self.extra_bed * self.extra_bed_price_at_check_in
         return total
 
     def get_room_price_unformatted(self):
@@ -195,7 +195,8 @@ class Customer(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.price_at_check_in = self.room.room_type.fee.first().amount
+            self.price_at_check_in = self.fee.amount
+        self.extra_bed_price_at_check_in = ExtraBedPrice.objects.first().price
         
         self.slug = uuid.uuid4().hex
         
