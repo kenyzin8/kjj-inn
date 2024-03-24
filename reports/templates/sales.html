@@ -47,7 +47,7 @@
             <h2 id="accordion-collapse-heading-1">
                 <button type="button" class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-t-2 border-gray-200 rounded-t-xl dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#accordion-collapse-body-1" aria-expanded="true" aria-controls="accordion-collapse-body-1">
                     <div class="text-[orange] font-bold text-lg">
-                        Room Sales
+                        Room Sales - {{ room_total_sales|safe }}
                     </div>
                     <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
@@ -93,7 +93,7 @@
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                        {{ forloop.counter }}
+                                        {{ customer.id }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -145,12 +145,90 @@
                 </div>
             </div>
         </div>
-        
+        <!-- Room Sales Pagination -->
+        <nav aria-label="Room Sales Pagination" class="mt-3">
+            <ul class="flex items-center -space-x-px h-8 text-sm">
+                {% if checked_out_rooms.has_previous %}
+                <li>
+                    {% if start_date or end_date %}
+                    <a href="?rooms_page={{ checked_out_rooms.previous_page_number }}&walk_in_page={{ walk_in_purchases_page }}&startDate={{ start_date }}&endDate={{ end_date }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="?rooms_page={{ checked_out_rooms.previous_page_number }}&walk_in_page={{ walk_in_purchases_page }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </li>
+                {% else %}
+                <li>
+                    <a class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in checked_out_rooms.paginator.page_range %}
+                    {% if start_date or end_date %}
+                    <li>
+                        <a href="?rooms_page={{ num }}&walk_in_page={{ walk_in_purchases_page }}&startDate={{ start_date }}&endDate={{ end_date }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 {% if checked_out_rooms.number == num %}dark:bg-gray-700{% else %}dark:bg-gray-800{% endif %} dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            {{ num }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="?rooms_page={{ num }}&walk_in_page={{ walk_in_purchases_page }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 {% if checked_out_rooms.number == num %}dark:bg-gray-700{% else %}dark:bg-gray-800{% endif %} dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            {{ num }}
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if checked_out_rooms.has_next %}
+                <li>
+                    {% if start_date or end_date %}
+                    <a href="?rooms_page={{ checked_out_rooms.next_page_number }}&walk_in_page={{ walk_in_purchases_page }}&startDate={{ start_date }}&endDate={{ end_date }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="?rooms_page={{ checked_out_rooms.next_page_number }}&walk_in_page={{ walk_in_purchases_page }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </li>
+                {% else %}
+                <li>
+                    <a class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <hr class="h-1 mx-auto mt-5 bg-gray-100 border-0 rounded dark:bg-gray-700">
         <div id="accordion-collapse-walk-in-sales" data-accordion="collapse">
             <h2 id="accordion-collapse-heading-2" class="mt-5">
                 <button type="button" class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-t-2 border-gray-200 rounded-t-xl dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#accordion-collapse-body-2" aria-expanded="true" aria-controls="accordion-collapse-body-2">
                     <div class="text-[orange] font-bold text-lg">
-                        Walk-In Sales
+                        Walk-In Sales - {{ walk_in_total_sales|safe }}
                     </div>
                     <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
@@ -187,7 +265,7 @@
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">
-                                        {{ forloop.counter }}
+                                        {{ sale.id }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -222,8 +300,81 @@
                 </div>
             </div>
         </div>
+        <nav aria-label="Walk-In Sales Pagination" class="mt-3">
+            <ul class="flex items-center -space-x-px h-8 text-sm">
+                {% if walk_in_purchase_items.has_previous %}
+                <li>
+                    {% if start_date or end_date %}
+                    <a href="?walk_in_page={{ walk_in_purchase_items.previous_page_number }}&rooms_page={{ checked_out_rooms_page }}&startDate={{ start_date }}&endDate={{ end_date }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="?walk_in_page={{ walk_in_purchase_items.previous_page_number }}&rooms_page={{ checked_out_rooms_page }}" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </li>
+                {% else %}
+                <li>
+                    <a class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        <span class="sr-only">Previous</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
 
-        
+                {% for num in walk_in_purchase_items.paginator.page_range %}
+                    <li>
+                        {% if start_date or end_date %}
+                        <a href="?walk_in_page={{ num }}&rooms_page={{ checked_out_rooms_page }}&startDate={{ start_date }}&endDate={{ end_date }}" aria-current="page" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 {% if walk_in_purchase_items.number == num %}dark:bg-gray-700{% else %}dark:bg-gray-800{% endif %} dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            {{ num }}
+                        </a>
+                        {% else %}
+                        <a href="?walk_in_page={{ num }}&rooms_page={{ checked_out_rooms_page }}" aria-current="page" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 {% if walk_in_purchase_items.number == num %}dark:bg-gray-700{% else %}dark:bg-gray-800{% endif %} dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            {{ num }}
+                        </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+                {% if walk_in_purchase_items.has_next %}
+                <li>
+                    {% if start_date or end_date %}
+                    <a href="?walk_in_page={{ walk_in_purchase_items.next_page_number }}&rooms_page={{ checked_out_rooms_page }}&startDate={{ start_date }}&endDate={{ end_date }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                    {% else %}
+                    <a href="?walk_in_page={{ walk_in_purchase_items.next_page_number }}&rooms_page={{ checked_out_rooms_page }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </li>
+                {% else %}
+                <li>
+                    <a class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                        <span class="sr-only">Next</span>
+                        <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 </div>
 {% endblock %}
