@@ -236,6 +236,8 @@ $(document).on('submit', '#form-add-check-in', function(e) {
 
                 $("#select-room option[value='" + response.data.data.room_id + "']").remove();
 
+                $(".no-customer-msg").hide();
+
                 closeModals();
                 showSuccess('Room added successfully');
             }

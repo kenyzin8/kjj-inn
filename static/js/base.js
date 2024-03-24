@@ -5,6 +5,21 @@ var modals = [];
 var errorIndex = 0;
 var successIndex = 0;
 
+function playErrorAudio(){
+    var beepAudio = $("#error-audio")[0];
+    beepAudio.pause(); 
+    beepAudio.currentTime = 0; 
+    beepAudio.volume = 0.5;
+    beepAudio.play(); 
+}
+
+function playSuccessAudio(){
+    var beepAudio = $("#success-audio")[0];
+    beepAudio.pause();
+    beepAudio.currentTime = 0;
+    beepAudio.play();
+}
+
 function showError(message) {
     if (errorTimeoutId) {
         clearTimeout(errorTimeoutId);
@@ -23,6 +38,8 @@ function showError(message) {
     errorTimeoutId = setTimeout(function() {
         $(".toast-error").fadeOut();
     }, 5000);
+
+    playErrorAudio();
 }
 
 function showSuccess(message) {
@@ -44,6 +61,8 @@ function showSuccess(message) {
     successTimeoutId = setTimeout(function() {
         $(".toast-success").fadeOut();
     }, 5000);
+
+    playSuccessAudio();
 }
 
 function toggleDropdown(element) {

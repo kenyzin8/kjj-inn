@@ -66,7 +66,6 @@ class Stock(models.Model):
         return f"{self.product.name} - {self.quantity}"
 
     def get_price(self):
-        print(self.price)
         return f"₱&nbsp;{self.price:,.2f}"
 
     def save(self, *args, **kwargs):

@@ -205,4 +205,5 @@ $(document).on('click', '.update-amount-paid', function() {
                 showSuccess(`Amount Paid: ${result.value}`);
             }
         });
+    $("#swal2-input").attr('autocomplete', 'off');
 });
