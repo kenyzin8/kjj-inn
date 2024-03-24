@@ -78,6 +78,7 @@
         </form>
     </div>
     {% endcomment %}
+    {% if active_rooms %}
     <div class="w-full bg-gray-800 p-6 rounded-md mb-3 active-room-container">
         <div class="mb-4">
             <span class="text-md font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">Active Rooms</span>
@@ -153,6 +154,7 @@
             </tbody>
         </table>
     </div>
+    {% endif %}
     <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-3">
         <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex flex-col justify-between">
             <div class="flex justify-between mb-5">
