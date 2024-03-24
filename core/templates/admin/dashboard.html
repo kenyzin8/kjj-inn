@@ -155,6 +155,7 @@
         </table>
     </div>
     {% endif %}
+    {% if request.user.is_staff %}
     <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-3">
         <div class="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6 flex flex-col justify-between">
             <div class="flex justify-between mb-5">
@@ -203,6 +204,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div> 
 {% endblock %} 
 {% block scripts %} 

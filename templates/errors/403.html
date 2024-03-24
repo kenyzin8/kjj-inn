@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark bg-[#121212]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 | Forbidden</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}"/>
+    <script src="{% static 'tailwind/tailwind.js' %}"></script>
+</head>
+<body>
+    <main class="flex justify-center items-center min-h-screen">
+        <div class="flex flex-col items-center text-center">
+            <div class="text-3xl text-white font-bold divide-y-8 cursor-default">
+                403 <span class="font-normal text-4xl">|</span> Forbidden
+            </div>
+            <a href="{% url 'admin-dashboard' %}" class="mt-4 inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                Go back to dashboard
+                <svg class="w-4 h-4 ml-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+            </a>
+        </div>
+    </main>
+    
+</body>
+</html>

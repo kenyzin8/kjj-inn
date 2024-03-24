@@ -1,20 +1,20 @@
 var inCart = [];
 
-function playBeepAudio(){
-    var beepAudio = $("#beep-audio")[0];
-    beepAudio.pause(); 
-    beepAudio.currentTime = 0; 
-    beepAudio.play(); 
-}
+// function playBeepAudio(){
+//     var beepAudio = $("#beep-audio")[0];
+//     beepAudio.pause(); 
+//     beepAudio.currentTime = 0; 
+//     beepAudio.play(); 
+// }
 
-function updateSubtotal(price_unformatted){
+function updateSubtotal(){
     var totalPriceDisplay = 0;
     $(".subtotal-prices").each(function(){
         var price = $(this).text().replace('₱', '').trim();
         
         totalPriceDisplay += parseFloat(price);
     });
-    $(".total-subtotal").text(`₱ ${$(".subtotal-prices").length == 0 ? price_unformatted : totalPriceDisplay.toFixed(2)}`);
+    $(".total-subtotal").text(`₱ ${$(".subtotal-prices").length == 0 ? 0 : totalPriceDisplay.toFixed(2)}`);
 }
 
 function resetFields(){
@@ -87,16 +87,16 @@ $(document).on('submit', '#add-to-cart-form', function(e){
 
         $(".total-quantity").text(parseInt($(".total-quantity").text()) + parseInt(quantity));
         $(`.subtotal-${data.identifier}`).text(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted));
-        updateSubtotal(data.price_unformatted);
+        updateSubtotal();
 
         $("#add-to-cart-product-barcode").val('');
 
-        playBeepAudio();
+        // playBeepAudio();
 
         if(inCart.includes(data.identifier)){
             $(`#product-${data.identifier}`).val(currentQuantity + parseInt(quantity));
             $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
-            updateSubtotal(data.price_unformatted);
+            updateSubtotal();
             showSuccess(`${data.product_name} added to cart`);
             return;
         }
@@ -104,10 +104,10 @@ $(document).on('submit', '#add-to-cart-form', function(e){
         $("#cart-tbody").append(`
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <input type="hidden" name="product-identifiers[]" value="${data.identifier}" />
-                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                     ${data.product_name}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <button id="product-decrement-${data.identifier}" class="inline-flex items-center justify-center p-1 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
                             <span class="sr-only">Quantity button</span>
@@ -122,19 +122,19 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                         </button>
                     </div>
                 </td>
-                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white cart-prices">
+                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white cart-prices whitespace-nowrap">
                     ${data.price}
                 </td>
-                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white subtotal-${data.identifier} subtotal-prices">
+                <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white subtotal-${data.identifier} subtotal-prices whitespace-nowrap">
                     ₱ ${data.subtotal}
                 </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline remove-product-from-cart" data-product-identifer="${data.identifier}">Remove</a>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline remove-product-from-cart" data-product-identifer="${data.identifier}" data-product-price="${data.price_unformatted}">Remove</a>
                 </td>
             </tr>
         `);
 
-        updateSubtotal(data.price_unformatted);
+        updateSubtotal();
 
         $(`#product-decrement-${data.identifier}`).on('click', function(){
             var currentQuantity = parseInt($(`#product-${data.identifier}`).val());
@@ -142,7 +142,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(`#product-${data.identifier}`).val(currentQuantity - 1);
                 $(".total-quantity").text(parseInt($(".total-quantity").text()) - 1);
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
-                updateSubtotal(data.price_unformatted);
+                updateSubtotal();
                 $("#add-to-cart-product-barcode").focus();
             }
         });
@@ -153,7 +153,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(`#product-${data.identifier}`).val(currentQuantity + 1);
                 $(".total-quantity").text(parseInt($(".total-quantity").text()) + 1);
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
-                updateSubtotal(data.price_unformatted);
+                updateSubtotal();
                 $("#add-to-cart-product-barcode").focus();
             }
         });
@@ -170,10 +170,12 @@ $(document).on('submit', '#add-to-cart-form', function(e){
 $(document).on('click', '.remove-product-from-cart', function(e){
     e.preventDefault();
     const identifier = $(this).data('product-identifer');
+    const price = $(this).data('product-price');
     inCart = inCart.filter(item => item !== identifier);
     $(".total-quantity").text(parseInt($(".total-quantity").text()) - parseInt($(`#product-${identifier}`).val()));
     $(this).closest('tr').remove();
     $("#add-to-cart-product-barcode").focus();
+    updateSubtotal();
 })
 
 $(document).on('click', '#decrement-button', function(){

@@ -37,6 +37,7 @@
                     <span class="ms-3">Store</span>
                 </a>
             </li>
+            {% if request.user.is_staff %}
             <li>
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-inventory" data-collapse-toggle="dropdown-inventory" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-dolly"></i>
@@ -86,8 +87,10 @@
                     </li>
                 </ul>
             </li>
+            {% endif %}
         </ul>
         <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-700">
+            {% if request.user.is_staff %}
             <li>
                 <a href="{% url 'user-management' %}" class="flex items-center p-2 rounded-md group 
                                                             {% if current_url_name == 'user-management' %}
@@ -182,6 +185,7 @@
                     </li>
                 </ul>
             </li>
+            {% endif %}
         </ul>
     </div>
     <div class="w-full p-3">
