@@ -131,3 +131,78 @@ $(document).on('click', '.check-out-customer', function() {
         }
     });
 });
+
+$(document).on('input', '#swal2-input', function () {
+    var value = $(this).val();
+
+    var match = value.match(/^\d*(\.\d{0,2})?/);
+    var numValue = match ? match[0] : '';
+
+    $(this).val(numValue);
+});
+
+$(document).on('blur', '#swal2-input', function () {
+    var value = $(this).val();
+
+    if (value) {
+        $(this).val(parseFloat(value).toFixed(2));
+    }
+});
+
+$(document).on('click', '.update-amount-paid', function() {
+    const currentPayment = $(this).data('current-payment');
+
+    Swal.fire({
+        title: "Update Amount Paid",
+        icon: "info",
+        input: "text",
+        inputAttributes: {
+          autocapitalize: "off"
+        },
+        showLoaderOnConfirm: true,
+        showDenyButton: true,
+        confirmButtonColor: "orange",
+        denyButtonColor: "#232323",
+        confirmButtonText: "Update",
+        denyButtonText: `Cancel`,
+        allowOutsideClick: false,
+        animation: true,
+        preConfirm: async (amount) => {
+            try {
+                if(amount <= 0){
+                    return Swal.showValidationMessage(`Invalid amount: ${amount}`);
+                }
+
+                const customerId = $(this).data('customer-id');
+
+                $("#swal2-input").val(currentPayment);
+
+                axios.post(customerUpdateAmountPaidURL, {id: customerId, amount_paid: amount},
+                    {headers: {'X-CSRFToken': getCSRFTokenFromCookies()}})
+                    .then(function (response) {
+                        if(response.data.success === true) {
+                            const data = response.data.data;
+                            $(".amount-paid").html(data.amount_paid);
+                            $(".grand-total-amount").html(data.grand_total);
+                            $(".remarks").html(data.remarks);
+                        }
+                        else{
+                            showError(response.data.message);
+                        }
+
+                    })
+                    .catch(function (error) {
+                        showError(error.message);
+                    });
+
+                return amount;
+            } catch (error) {
+                Swal.showValidationMessage(`Request failed: ${error}`);
+            }
+        },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showSuccess(`Amount Paid: ${result.value}`);
+            }
+        });
+});

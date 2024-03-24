@@ -246,8 +246,6 @@ def add_product(request):
         product_type_id=product_type_id
     ).exists()
 
-    print(name, trimmed_name, product_type_id, exist)
-
     if exist:
         return JsonResponse({'success': False, 'message': 'Product already exists', 'product_exists': True})
 

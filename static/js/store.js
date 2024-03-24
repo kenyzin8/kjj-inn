@@ -97,6 +97,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
             $(`#product-${data.identifier}`).val(currentQuantity + parseInt(quantity));
             $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
             updateSubtotal(data.price_unformatted);
+            showSuccess(`${data.product_name} added to cart`);
             return;
         }
 

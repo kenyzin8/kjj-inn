@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.utils import timezone
 
 # Create your models here.
 from room_management.models import Customer
@@ -102,7 +103,8 @@ class Purchase(models.Model):
         return f"₱&nbsp;{total:,.2f}"
 
     def get_created_at(self):
-        return self.created_at.strftime("%B %d, %Y - %I:%M %p")
+        self.created_at = timezone.localtime(self.created_at)
+        return self.created_at.strftime("%B %d, %Y %I:%M %p")
 
     def __str__(self):
         if self.is_walk_in:

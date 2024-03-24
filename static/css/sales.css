@@ -1,0 +1,45 @@
+:root{
+    --litepicker-container-months-color-bg: #121212 !important;
+    --litepicker-footer-box-shadow-color: #121212 !important;
+    --litepicker-container-months-box-shadow-color: #121212 !important;
+    --litepicker-month-header-color: white !important;
+    --litepicker-month-weekday-color: white !important;
+    --litepicker-day-color: white !important;
+    --litepicker-tooltip-color-bg: orange !important;
+    --litepicker-button-prev-month-color-hover: white !important;
+    --litepicker-button-next-month-color-hover: white !important;
+    --litepicker-button-prev-month-color: #9e9e9e;
+    --litepicker-button-next-month-color: #9e9e9e;
+    --litepicker-month-width: calc(var(--litepicker-day-width) * 7);
+    --litepicker-day-color-hover: orange !important;
+    --litepicker-is-today-color: orange !important;
+    --litepicker-is-in-range-color: rgba(255, 255, 255, 0.5) !important;
+    --litepicker-is-start-color: black !important;
+    --litepicker-is-start-color-bg: orange !important;
+    --litepicker-is-end-color: black !important;
+    --litepicker-is-end-color-bg: orange !important;
+}
+
+.litepicker{
+    color: white !important
+}
+
+.litepicker[data-plugins*="ranges"] > .container__main > .container__predefined-ranges {
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+
+    padding: 10px !important;
+}
+
+.litepicker .container__months {
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+
+    padding: 10px !important;
+
+    color: white !important;
+}

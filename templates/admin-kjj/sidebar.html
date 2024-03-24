@@ -1,5 +1,5 @@
 {% with request.resolver_match.url_name as current_url_name %}
-<aside id="separator-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
+<aside id="separator-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
     <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
             <li>
@@ -162,12 +162,12 @@
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-reports" data-collapse-toggle="dropdown-reports" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-paperclip"></i>
                     <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Reports</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'sales' %}rotate-90{% endif %} arrow-indicator"></i>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'sales' and current_url_name != 'view-sales' %}rotate-90{% endif %} arrow-indicator"></i>
                 </button>
-                <ul id="dropdown-reports" class="{% if current_url_name != 'sales' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                <ul id="dropdown-reports" class="{% if current_url_name != 'sales' and current_url_name != 'view-sales' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
                     <li>
                         <a href="{% url 'sales' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'sales' %}
+                                                                {% if current_url_name == 'sales' or current_url_name == 'view-sales' %}
                                                                     bg-[orange] text-black font-bold
                                                                 {% else %}
                                                                     text-white hover:bg-gray-700

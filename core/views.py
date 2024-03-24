@@ -6,7 +6,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from core.decorators import staff_required
 from django.utils import timezone
+
+from inventory_management.models import Purchase, PurchaseItem
+from room_management.models import Customer, ExtraBedPrice
+
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
+
 import json
+import datetime
 
 def index(request):
     return render(request, 'index.html')
@@ -14,6 +22,160 @@ def index(request):
 @login_required
 def dashboard(request):
     user = request.user
+    current_date = timezone.now()
+    current_month_start = current_date.replace(day=1)
+    last_month_end = current_month_start - timezone.timedelta(days=1)
+    last_month_start = last_month_end.replace(day=1)
+    two_months_ago_end = last_month_start - timezone.timedelta(days=1)
+    two_months_ago_start = two_months_ago_end.replace(day=1)
+
+    last_month_room_sales = Customer.objects.filter(
+        check_in_date__range=[last_month_start, last_month_end],
+        is_active=False
+    ).aggregate(total=Sum('fee__amount'))['total'] or 0
+
+    last_month_walk_in_sales = PurchaseItem.objects.filter(
+        purchase__created_at__range=[last_month_start, last_month_end],
+        purchase__is_walk_in=True,
+        is_active=True
+    ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
+
+    previous_month_room_sales = Customer.objects.filter(
+        check_in_date__range=[two_months_ago_start, two_months_ago_end],
+        is_active=False
+    ).aggregate(total=Sum('fee__amount'))['total'] or 0
+
+    previous_month_walk_in_sales = PurchaseItem.objects.filter(
+        purchase__created_at__range=[two_months_ago_start, two_months_ago_end],
+        purchase__is_walk_in=True,
+        is_active=True
+    ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
+
+    last_month_total_sales = last_month_room_sales + last_month_walk_in_sales
+    previous_month_total_sales = previous_month_room_sales + previous_month_walk_in_sales
+
+    if previous_month_total_sales > 0:
+        growth_percentage = ((last_month_total_sales - previous_month_total_sales) / previous_month_total_sales) * 100
+    else:
+        growth_percentage = 100 if last_month_total_sales > 0 else 0
+
+    if growth_percentage > 0:
+        growth_icon = 'fa-arrow-up'
+        growth_color = 'text-green-500 dark:text-green-500'
+    elif growth_percentage < 0:
+        growth_icon = 'fa-arrow-down'
+        growth_color = 'text-red-500 dark:text-red-500'
+    else:
+        growth_icon = 'fa-minus'
+        growth_color = 'text-yellow-500 dark:text-yellow-500'
+
+    last_month_customers = Customer.objects.filter(
+        check_in_date__range=[last_month_start, last_month_end],
+        is_active=False
+    ).count() + Purchase.objects.filter(
+        created_at__range=[last_month_start, last_month_end],
+        is_walk_in=True,
+        is_active=True
+    ).count()
+
+    previous_month_customers = Customer.objects.filter(
+        check_in_date__range=[two_months_ago_start, two_months_ago_end],
+        is_active=False
+    ).count() + Purchase.objects.filter(
+        created_at__range=[two_months_ago_start, two_months_ago_end],
+        is_walk_in=True,
+        is_active=True
+    ).count()
+
+    if previous_month_customers > 0:
+        customer_growth_percentage = ((last_month_customers - previous_month_customers) / previous_month_customers) * 100
+    else:
+        customer_growth_percentage = 100 if last_month_customers > 0 else 0
+
+
+    if customer_growth_percentage > 0:
+        customer_growth_icon = 'fa-arrow-up'
+        customer_growth_color = 'text-green-500 dark:text-green-500'
+    elif customer_growth_percentage < 0:
+        customer_growth_icon = 'fa-arrow-down'
+        customer_growth_color = 'text-red-500 dark:text-red-500'
+    else:
+        customer_growth_icon = 'fa-minus'
+        customer_growth_color = 'text-yellow-500 dark:text-yellow-500'
+
+    current_year = timezone.now().year
+
+    room_sales = Customer.objects.filter(
+        check_in_date__year=current_year,
+        is_active=False 
+    ).annotate(
+        month=TruncMonth('check_in_date')
+    ).values('month').annotate(
+        total=Sum('fee__amount') 
+    ).order_by('month')
+
+    walk_in_sales = PurchaseItem.objects.filter(
+        purchase__created_at__year=current_year,
+        purchase__is_walk_in=True,
+        is_active=True
+    ).annotate(
+        month=TruncMonth('purchase__created_at')
+    ).values('month').annotate(
+        total=Sum('price_at_purchase')
+    ).order_by('month')
+
+    room_customer_counts = Customer.objects.filter(
+        check_in_date__year=current_year,
+        is_active=False
+    ).annotate(
+        month=TruncMonth('check_in_date')
+    ).values('month').annotate(
+        count=Count('id', distinct=True)
+    ).order_by('month')
+
+    walk_in_purchase_counts = Purchase.objects.filter(
+        created_at__year=current_year,
+        is_walk_in=True,
+        is_active=True
+    ).annotate(
+        month=TruncMonth('created_at')
+    ).values('month').annotate(
+        count=Count('id', distinct=True)
+    ).order_by('month')
+
+    room_sales_data = [0] * 12
+    walk_in_sales_data = [0] * 12
+
+    customer_counts = [0] * 12 
+
+    total_sales = 0
+    total_customers = 0
+
+    for sale in room_sales:
+        month_index = sale['month'].month - 1
+        room_sales_data[month_index] = float(sale['total']) or 0 
+        
+        total_sales += float(sale['total']) or 0
+
+    for sale in walk_in_sales:
+        month_index = sale['month'].month - 1
+        walk_in_sales_data[month_index] = float(sale['total']) or 0 
+
+        total_sales += float(sale['total']) or 0
+
+    for count_data in room_customer_counts:
+        month_index = count_data['month'].month - 1
+        customer_counts[month_index] += count_data['count']
+        total_customers += count_data['count']
+
+    for count_data in walk_in_purchase_counts:
+        month_index = count_data['month'].month - 1
+        customer_counts[month_index] += count_data['count']
+        total_customers += count_data['count']
+
+    month_indicators = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+    active_rooms = Customer.objects.filter(is_active=True)
 
     breadcrumbs = [
         ('Dashboard', None), 
@@ -21,7 +183,20 @@ def dashboard(request):
 
     context = {
         'user': user,
-        'breadcrumbs': breadcrumbs
+        'breadcrumbs': breadcrumbs,
+        'room_sales_data': room_sales_data,
+        'walk_in_sales_data': walk_in_sales_data,
+        'month_indicators': month_indicators,
+        'total_sales': f'₱&nbsp;{total_sales:,.2f}',
+        'active_rooms': active_rooms,
+        'growth_percentage': f'{growth_percentage:.1f}%',
+        'growth_icon': growth_icon,
+        'growth_color': growth_color,
+        'room_customer_counts': customer_counts,
+        'total_customers': total_customers,
+        'customer_growth_percentage': f'{customer_growth_percentage:.1f}%',
+        'customer_growth_icon': customer_growth_icon,
+        'customer_growth_color': customer_growth_color,
     }
 
     return render(request, 'admin/dashboard.html', context)

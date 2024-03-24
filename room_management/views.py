@@ -586,6 +586,7 @@ def add_customer_check_in(request):
     customer.save()
 
     customer.check_out_date = customer.check_in_date + timezone.timedelta(hours=hours.hours)
+    customer.original_check_out_date = customer.check_out_date
     customer.save()
 
     data = {
@@ -645,6 +646,54 @@ def view_check_in_summary(request, customer_slug):
         'extra_bed': extra_bed,
     }
     return render(request, 'check-in/view-check-in-summary.html', context)
+
+@login_required
+@staff_required
+def update_amount_paid(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    data = json.loads(request.body)
+    customer_id = data.get('id')
+    amount_paid = data.get('amount_paid')
+
+    if not customer_id:
+        return JsonResponse({'success': False, 'message': 'Invalid customer id'})
+
+    if not amount_paid:
+        return JsonResponse({'success': False, 'message': 'Amount paid is required'})
+
+    customer = Customer.objects.filter(id=customer_id).first()
+    customer.amount_paid = float(amount_paid)
+    customer.save()
+
+    total_price = customer.get_extra_bed_price_unformatted() + customer.fee.amount
+    purchases = Purchase.objects.filter(customer=customer, is_active=True).order_by('-created_at')
+    purchase_items = PurchaseItem.objects.filter(purchase__in=purchases, is_active=True).order_by('created_at')
+
+    for purchase_item in purchase_items:
+        total_price += purchase_item.price_at_purchase * purchase_item.quantity
+
+    customer.total_price = total_price
+    customer.total_quantity = customer.extra_bed + 1 + sum([item.quantity for item in purchase_items])
+    customer.grand_total = float(total_price) - float(customer.amount_paid)
+
+    if customer.grand_total == 0:
+        remarks = 'PAID'
+    else:
+        if customer.grand_total < 0:
+            remarks = 'CHANGE'
+        else:
+            remarks = 'BALANCE'
+
+    data = {
+        'id': customer.id,
+        'grand_total': f"₱&nbsp;{customer.grand_total:,.2f}",
+        'amount_paid': f"₱&nbsp;{customer.amount_paid:,.2f}",
+        'remarks': remarks if remarks else None,
+    }
+
+    return JsonResponse({'success': True, 'message': 'Amount paid updated successfuly', 'data': data})
 
 @staff_required
 @login_required

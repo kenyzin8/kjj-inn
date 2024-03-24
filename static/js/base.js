@@ -2,13 +2,18 @@ let errorTimeoutId;
 let successTimeoutId;
 var modals = [];
 
+var errorIndex = 0;
+var successIndex = 0;
+
 function showError(message) {
     if (errorTimeoutId) {
         clearTimeout(errorTimeoutId);
     }
 
-    $(".toast-error-message").html(message);
-    
+    errorIndex++;
+
+    $(".toast-error-message").html(`${errorIndex} - ${message}`);
+
     if ($(".toast-error").is(":hidden")) {
         $(".toast-error").fadeIn();
         $(".toast-error").css('display', 'inline-flex');
@@ -25,7 +30,9 @@ function showSuccess(message) {
         clearTimeout(successTimeoutId);
     }
 
-    $(".toast-success-message").html(message);
+    successIndex++;
+
+    $(".toast-success-message").html(`${successIndex} - ${message}`);
 
     if ($(".toast-success").is(":hidden")) {
         $(".toast-success").fadeIn();

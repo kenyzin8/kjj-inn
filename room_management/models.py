@@ -131,6 +131,7 @@ class Customer(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     fee = models.ForeignKey(Fee, on_delete=models.CASCADE, blank=True, null=True)
     check_in_date = models.DateTimeField(auto_now_add=True)
+    original_check_out_date = models.DateTimeField(blank=True, null=True)
     check_out_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -163,6 +164,25 @@ class Customer(models.Model):
     def get_room_price_unformatted(self):
         return self.price_at_check_in
 
+    def get_percentage_original_check_out_date(self):
+        original_check_out_date = timezone.localtime(self.original_check_out_date)
+        check_in_date = timezone.localtime(self.check_in_date)
+        check_out_date = timezone.localtime(self.check_out_date)
+
+        total_duration = (original_check_out_date - check_in_date).total_seconds()
+
+        elapsed_time = (check_out_date - check_in_date).total_seconds()
+
+        if total_duration > 0:
+            percentage = (elapsed_time / total_duration) * 100
+        else:
+            percentage = 0
+
+        if percentage > 100:
+            percentage = 100
+
+        return f"{percentage:.2f}" if percentage > 0 else "0.00"
+
     def unformatted_get_remaining_time(self):
         self.check_out_date = timezone.localtime(self.check_out_date)
         remaining_time = max(self.check_out_date - timezone.now(), timezone.timedelta(seconds=0))
@@ -171,6 +191,7 @@ class Customer(models.Model):
         minutes, seconds = divmod(remainder, 60)
         formatted_time = f"{int(hours)}hrs {int(minutes)}mins {int(seconds)}secs"
         return formatted_time if total_seconds > 0 else "end"
+
 
     def get_remaining_time(self):
         self.check_out_date = timezone.localtime(self.check_out_date)
@@ -185,6 +206,11 @@ class Customer(models.Model):
         parts.append(f"{int(seconds)}sec{'s' if seconds != 1 else ''}")
         return ' '.join(parts)
 
+
+    def get_formatted_original_check_out_date(self):
+        self.original_check_out_date = timezone.localtime(self.original_check_out_date)
+        return self.original_check_out_date.strftime("%B %d, %Y - %I:%M %p")
+
     def get_formatted_check_out_date(self):
         self.check_out_date = timezone.localtime(self.check_out_date)
         return self.check_out_date.strftime("%B %d, %Y - %I:%M %p")
@@ -196,9 +222,8 @@ class Customer(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.price_at_check_in = self.fee.amount
-        self.extra_bed_price_at_check_in = ExtraBedPrice.objects.first().price
-        
-        self.slug = uuid.uuid4().hex
+            self.extra_bed_price_at_check_in = ExtraBedPrice.objects.first().price
+            self.slug = uuid.uuid4().hex
         
         super(Customer, self).save(*args, **kwargs)
 
