@@ -20,7 +20,7 @@ $(document).on('submit', '#form-add-fees', function(e){
                 $(".fees-tbody").prepend(`
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 fee-row-${data.id}">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">${$('.fees-tbody tr').length + 1}</span>
+                            <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange]">${$('.fees-tbody tr').length}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] fee-hours">${data.hours}</span>

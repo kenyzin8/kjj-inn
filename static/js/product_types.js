@@ -29,7 +29,7 @@ $(document).on('submit', '#form-add-product-type', function(e) {
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 product-type-row-${data.id}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-type-index">
-                                ${$(".product-types-tbody tr").length + 1}
+                                ${$(".product-types-tbody tr").length}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

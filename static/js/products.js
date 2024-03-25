@@ -37,7 +37,7 @@ $(document).on('submit', '#form-add-product', function(e) {
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 product-row-${data.id}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] product-index">
-                                ${$(".products-tbody tr").length + 1}
+                                ${$(".products-tbody tr").length}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

@@ -69,7 +69,7 @@ $(document).on('submit', '#form-add-room', function(e) {
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 room-row-${data.id}">
                         <th class="px-6 py-4">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] room-index">
-                                ${$('.rooms-tbody tr').length + 1}
+                                ${$('.rooms-tbody tr').length}
                             </span>
                         </th>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
