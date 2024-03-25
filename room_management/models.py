@@ -53,7 +53,8 @@ class Fee(models.Model):
         return a
 
     def get_amount(self):
-        self.amount = float(self.amount)
+        if type(self.amount) == str:
+            self.amount = float(self.amount.replace(',', ''))
         self.amount = f"{self.amount:,.2f}"
         return f"₱&nbsp;{self.amount}"
 
