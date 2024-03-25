@@ -51,11 +51,16 @@ $(document).on('click', '#add-barcode-button', function() {
 });
 
 $(document).on('change', '#add-product', function() {
+    $("#add-barcode").val("");
     var product = $(this).val();
     if (product) {
         $("#add-barcode").focus();
     }
 });
+
+$(document).on('keydown', 'html', function(e){
+    $("#add-barcode").focus();
+})
 
 $(document).on('submit', '#form-add-barcode', function(e) {
     e.preventDefault();
@@ -64,6 +69,8 @@ $(document).on('submit', '#form-add-barcode', function(e) {
 
     axios.post(addBarcodeURL, data)
         .then(function (response) {
+            
+            $("#add-barcode").val("");
 
             if(response.data.product_exists === true){
                 showError(response.data.message);
@@ -101,6 +108,9 @@ $(document).on('submit', '#form-add-barcode', function(e) {
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
+                            <svg id="bc-${data.id}" ></svg>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-product">
                                 ${data.product}
                             </span>
@@ -118,7 +128,12 @@ $(document).on('submit', '#form-add-barcode', function(e) {
                     </tr>
                 `);
 
-                $("#add-barcode").val("");
+                JsBarcode(`#bc-${data.id}`, `${data.barcode}`, {
+                    width:1,
+                    height: 30,
+                    displayValue: false
+                });
+
                 $("#add-barcode").focus();
 
                 showSuccess(response.data.message);

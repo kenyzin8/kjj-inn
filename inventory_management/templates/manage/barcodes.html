@@ -75,7 +75,9 @@
 .select2-container--default .select2-results__option--selected {
     background-color: rgb(55 65 81/var(--tw-bg-opacity)) !important;
 }
+
 </style>
+<script src="{% static 'jsBarcode/jsbarcode.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -111,7 +113,10 @@
                             #
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Barcode
+                            Barcode Text
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Barcode Image
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Product
@@ -133,6 +138,16 @@
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-name">
                                 {{ barcode.barcode }}
                             </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <svg id="bc-{{ barcode.id }}" ></svg>
+                            <script>
+                                JsBarcode("#bc-{{ barcode.id }}", "{{ barcode.barcode }}", {
+                                        width:1,
+                                        height: 30,
+                                        displayValue: false
+                                    });
+                            </script>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-[orange] barcode-product">

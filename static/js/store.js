@@ -73,6 +73,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
     .then(function (response) {
         const data = response.data.data;
 
+        $("#add-to-cart-product-barcode").val('');
+
         if(!response.data.success){
             showError(response.data.message);
             return;
@@ -89,8 +91,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
         $(`.subtotal-${data.identifier}`).text(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted));
         updateSubtotal();
 
-        $("#add-to-cart-product-barcode").val('');
-
+    
         // playBeepAudio();
 
         if(inCart.includes(data.identifier)){
