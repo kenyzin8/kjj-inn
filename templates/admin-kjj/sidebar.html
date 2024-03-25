@@ -24,8 +24,6 @@
                     <span class="ms-3">Check-In</span>
                 </a>
             </li>
-        </ul>
-        <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-700">
             <li>
                 <a href="{% url 'store' %}" class="flex items-center p-2 rounded-md group 
                                                             {% if current_url_name == 'store' %}
@@ -37,7 +35,68 @@
                     <span class="ms-3">Store</span>
                 </a>
             </li>
+        </ul>
+        <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-700">
             {% if request.user.is_staff %}
+            <li>
+                <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-manage" data-collapse-toggle="dropdown-manage" onclick="toggleDropdown(this)">
+                    <i class="fa-solid fa-people-roof"></i>
+                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Room</span>
+                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}rotate-90{% endif %} arrow-indicator"></i>
+                </button>
+                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
+                    <li>
+                        <a href="{% url 'manage-fees' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-fees' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Fees
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'manage-room-types' %}"  class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-room-types' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Room Types
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'manage-buildings' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-buildings' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Buildings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'manage-rooms' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-rooms' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Rooms
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'manage-extra-bed' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
+                                                                {% if current_url_name == 'manage-extra-bed' %}
+                                                                    bg-[orange] text-black font-bold
+                                                                {% else %}
+                                                                    text-white hover:bg-gray-700
+                                                                {% endif %}">
+                            Extra Bed Price
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-inventory" data-collapse-toggle="dropdown-inventory" onclick="toggleDropdown(this)">
                     <i class="fa-solid fa-dolly"></i>
@@ -101,65 +160,6 @@
                     <i class="fa-solid fa-users"></i>
                     <span class="ms-3">Users</span>
                 </a>
-            </li>
-            <li>
-                <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-manage" data-collapse-toggle="dropdown-manage" onclick="toggleDropdown(this)">
-                    <i class="fa-solid fa-gear"></i>
-                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Manage</span>
-                    <i class="fa-solid fa-chevron-down {% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}rotate-90{% endif %} arrow-indicator"></i>
-                </button>
-                <ul id="dropdown-manage" class="{% if current_url_name != 'manage-rooms' and current_url_name != 'manage-fees' and current_url_name != 'manage-room-types' and current_url_name != 'manage-buildings' and current_url_name != 'manage-extra-bed' %}hidden{% endif %} py-2 space-y-2 border-l border-gray-400">
-                    <li>
-                        <a href="{% url 'manage-fees' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'manage-fees' %}
-                                                                    bg-[orange] text-black font-bold
-                                                                {% else %}
-                                                                    text-white hover:bg-gray-700
-                                                                {% endif %}">
-                            Fees
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'manage-room-types' %}"  class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'manage-room-types' %}
-                                                                    bg-[orange] text-black font-bold
-                                                                {% else %}
-                                                                    text-white hover:bg-gray-700
-                                                                {% endif %}">
-                            Room Types
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'manage-buildings' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'manage-buildings' %}
-                                                                    bg-[orange] text-black font-bold
-                                                                {% else %}
-                                                                    text-white hover:bg-gray-700
-                                                                {% endif %}">
-                            Buildings
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'manage-rooms' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'manage-rooms' %}
-                                                                    bg-[orange] text-black font-bold
-                                                                {% else %}
-                                                                    text-white hover:bg-gray-700
-                                                                {% endif %}">
-                            Rooms
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'manage-extra-bed' %}" class="flex items-center w-full p-2 transition duration-75 pl-11 group     
-                                                                {% if current_url_name == 'manage-extra-bed' %}
-                                                                    bg-[orange] text-black font-bold
-                                                                {% else %}
-                                                                    text-white hover:bg-gray-700
-                                                                {% endif %}">
-                            Extra Bed Price
-                        </a>
-                    </li>
-                </ul>
             </li>
             <li>
                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-reports" data-collapse-toggle="dropdown-reports" onclick="toggleDropdown(this)">
