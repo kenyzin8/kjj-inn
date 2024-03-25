@@ -140,12 +140,13 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <svg id="bc-{{ barcode.id }}" ></svg>
+                            <svg id="bc-{{ barcode.id }}" class="rounded"></svg>
                             <script>
                                 JsBarcode("#bc-{{ barcode.id }}", "{{ barcode.barcode }}", {
                                         width:1,
                                         height: 30,
-                                        displayValue: false
+                                        displayValue: true,
+                                        fontSize: 13
                                     });
                             </script>
                         </td>

@@ -74,6 +74,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
         const data = response.data.data;
 
         $("#add-to-cart-product-barcode").val('');
+        $("#add-to-cart-quantity-input").val(1);
 
         if(!response.data.success){
             showError(response.data.message);

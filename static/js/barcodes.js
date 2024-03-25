@@ -131,7 +131,8 @@ $(document).on('submit', '#form-add-barcode', function(e) {
                 JsBarcode(`#bc-${data.id}`, `${data.barcode}`, {
                     width:1,
                     height: 30,
-                    displayValue: false
+                    displayValue: true,
+                    fontSize: 13
                 });
 
                 $("#add-barcode").focus();
