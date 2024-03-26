@@ -274,5 +274,14 @@ $(document).on('click', '.add-to-cart-button', function(){
 })
 
 $(document).on('keydown', 'html', function(e){
-    $("#add-to-cart-product-barcode").focus();
+    const addToCartQuantityInput = $("#add-to-cart-quantity-input");
+    if(!addToCartQuantityInput.is(':focus')){
+        $("#add-to-cart-product-barcode").focus();
+    }
 })
+
+$(document).on('keydown', '.add-to-cart-quantity-input', function(e){
+    if (e.keyCode < 49 || e.keyCode > 57) {
+        e.preventDefault();
+    }
+});
