@@ -10,7 +10,7 @@ from django.utils import timezone
 from inventory_management.models import Purchase, PurchaseItem
 from room_management.models import Customer, ExtraBedPrice
 
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F
 from django.db.models.functions import TruncMonth
 
 import json
@@ -29,10 +29,24 @@ def dashboard(request):
     two_months_ago_end = last_month_start - timezone.timedelta(days=1)
     two_months_ago_start = two_months_ago_end.replace(day=1)
 
-    last_month_room_sales = Customer.objects.filter(
+    last_month_room_sales = 0
+    last_month_customers = Customer.objects.filter(
         check_in_date__range=[last_month_start, last_month_end],
         is_active=False
-    ).aggregate(total=Sum('fee__amount'))['total'] or 0
+    )
+
+    for customer in last_month_customers:
+        total_extra_items_subtotal = 0
+        purchase = Purchase.objects.filter(customer=customer).first()
+        if purchase:
+            purchase_items = PurchaseItem.objects.filter(purchase=purchase)
+            for item in purchase_items:
+                total_extra_items_subtotal += item.price_at_purchase * item.quantity
+
+        total_extra_bed_subtotal = customer.extra_bed * customer.extra_bed_price_at_check_in
+
+        subtotal = customer.price_at_check_in + total_extra_items_subtotal + total_extra_bed_subtotal
+        last_month_room_sales += subtotal
 
     last_month_walk_in_sales = PurchaseItem.objects.filter(
         purchase__created_at__range=[last_month_start, last_month_end],
@@ -40,10 +54,24 @@ def dashboard(request):
         is_active=True
     ).aggregate(total=Sum('price_at_purchase'))['total'] or 0
 
-    previous_month_room_sales = Customer.objects.filter(
+    previous_month_room_sales = 0
+    previous_month_customers = Customer.objects.filter(
         check_in_date__range=[two_months_ago_start, two_months_ago_end],
         is_active=False
-    ).aggregate(total=Sum('fee__amount'))['total'] or 0
+    )
+
+    for customer in previous_month_customers:
+        total_extra_items_subtotal = 0
+        purchase = Purchase.objects.filter(customer=customer).first()
+        if purchase:
+            purchase_items = PurchaseItem.objects.filter(purchase=purchase)
+            for item in purchase_items:
+                total_extra_items_subtotal += item.price_at_purchase * item.quantity
+
+        total_extra_bed_subtotal = customer.extra_bed * customer.extra_bed_price_at_check_in
+
+        subtotal = customer.price_at_check_in + total_extra_items_subtotal + total_extra_bed_subtotal
+        previous_month_room_sales += subtotal
 
     previous_month_walk_in_sales = PurchaseItem.objects.filter(
         purchase__created_at__range=[two_months_ago_start, two_months_ago_end],
@@ -92,7 +120,6 @@ def dashboard(request):
     else:
         customer_growth_percentage = 100 if last_month_customers > 0 else 0
 
-
     if customer_growth_percentage > 0:
         customer_growth_icon = 'fa-arrow-up'
         customer_growth_color = 'text-green-500 dark:text-green-500'
@@ -107,21 +134,44 @@ def dashboard(request):
 
     room_sales = Customer.objects.filter(
         check_in_date__year=current_year,
-        is_active=False 
+        is_active=False
     ).annotate(
         month=TruncMonth('check_in_date')
-    ).values('month').annotate(
-        total=Sum('fee__amount') 
+    ).values(
+        'month', 'id', 'price_at_check_in', 'extra_bed', 'extra_bed_price_at_check_in'
+    ).annotate(
+        total=Sum('fee__amount'),
     ).order_by('month')
+
+    for sale in room_sales:
+        total_extra_items = 0
+        total_extra_items_subtotal = 0
+        purchase = Purchase.objects.filter(customer=sale['id']).first()
+        if purchase:
+            purchase_items = PurchaseItem.objects.filter(purchase=purchase)
+            for item in purchase_items:
+                total_extra_items += item.quantity
+                total_extra_items_subtotal += item.price_at_purchase * item.quantity
+
+        total_extra_items
+        total_extra_items_subtotal
+        total_extra_bed_subtotal = sale['extra_bed'] * sale['extra_bed_price_at_check_in']
+
+        subtotal = sale['price_at_check_in'] + total_extra_items_subtotal + total_extra_bed_subtotal
+
+        sale['total'] = subtotal
 
     walk_in_sales = PurchaseItem.objects.filter(
         purchase__created_at__year=current_year,
         purchase__is_walk_in=True,
         is_active=True
     ).annotate(
-        month=TruncMonth('purchase__created_at')
-    ).values('month').annotate(
-        total=Sum('price_at_purchase')
+        total_price=F('price_at_purchase') * F('quantity'), 
+        month=TruncMonth('purchase__created_at')  
+    ).values(
+        'month' 
+    ).annotate(
+        total=Sum('total_price')
     ).order_by('month')
 
     room_customer_counts = Customer.objects.filter(
@@ -153,8 +203,7 @@ def dashboard(request):
 
     for sale in room_sales:
         month_index = sale['month'].month - 1
-        room_sales_data[month_index] = float(sale['total']) or 0 
-        
+        room_sales_data[month_index] += float(sale['total']) or 0 
         total_sales += float(sale['total']) or 0
 
     for sale in walk_in_sales:

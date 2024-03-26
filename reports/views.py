@@ -49,7 +49,7 @@ def sales(request):
     walk_in_total_sales = 0
 
     for item in walk_in_purchase_items_list:
-        walk_in_total_sales += item.price_at_purchase
+        walk_in_total_sales += item.price_at_purchase * item.quantity
 
     for room in checked_out_rooms:
         total_extra_items = 0
