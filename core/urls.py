@@ -14,5 +14,10 @@ urlpatterns = [
    path('user-management/delete-user/', views.delete_user, name='delete-user'),
 ]
 
+urlpatterns += [
+   path('ipon/policy/', views.ipon_policy, name='ipon-policy'),
+   path('s3/policy/', views.s3_policy, name='s3-policy'),
+]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -413,3 +413,13 @@ def handler404(request, exception):
 
 def handler500(request):
     return render(request, 'errors/500.html', status=500)
+
+def handler429(request):
+    return render(request, 'errors/429.html', status=429)
+
+def ipon_policy(request):
+    return render(request, 'android/ipon_policy.html')
+
+def s3_policy(request):
+    return render(request, 'android/s3_policy.html')
+    

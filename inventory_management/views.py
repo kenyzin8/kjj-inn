@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import *
 from room_management.models import Room, Customer
 from django.contrib.auth.decorators import login_required
-from core.decorators import staff_required
+from core.decorators import staff_required, rate_limit
 from django.http import JsonResponse
 from django.db import transaction
 import json
@@ -23,6 +23,7 @@ def store(request):
     return render(request, 'store.html', context)
 
 @login_required
+@rate_limit(50, 'min')
 def fetch_product(request):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
