@@ -94,6 +94,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
 
     
         // playBeepAudio();
+        const plural = quantity > 1 ? 's' : '';
+        $(".recent-item").text(`${data.product_name} - ${quantity} pc${plural}`);
 
         if(inCart.includes(data.identifier)){
             $(`#product-${data.identifier}`).val(currentQuantity + parseInt(quantity));
@@ -103,7 +105,7 @@ $(document).on('submit', '#add-to-cart-form', function(e){
             return;
         }
 
-        $("#cart-tbody").append(`
+        $("#cart-tbody").prepend(`
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <input type="hidden" name="product-identifiers[]" value="${data.identifier}" />
                 <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white whitespace-nowrap">
@@ -146,6 +148,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
                 updateSubtotal();
                 $("#add-to-cart-product-barcode").focus();
+
+                $(".recent-item").text(`${data.product_name} - ${currentQuantity - 1} pc${currentQuantity - 1 > 1 ? 's' : ''}`);
             }
         });
 
@@ -157,6 +161,8 @@ $(document).on('submit', '#add-to-cart-form', function(e){
                 $(`.subtotal-${data.identifier}`).text(`₱ ${parseFloat(parseFloat($(`#product-${data.identifier}`).val()) * parseFloat(data.price_unformatted)).toFixed(2)}`);
                 updateSubtotal();
                 $("#add-to-cart-product-barcode").focus();
+
+                $(".recent-item").text(`${data.product_name} - ${currentQuantity + 1} pc${currentQuantity + 1 > 1 ? 's' : ''}`);
             }
         });
         
@@ -178,6 +184,9 @@ $(document).on('click', '.remove-product-from-cart', function(e){
     $(this).closest('tr').remove();
     $("#add-to-cart-product-barcode").focus();
     updateSubtotal();
+
+    // first product name in cart-tbody
+    $(".recent-item").text("-");
 })
 
 $(document).on('click', '#decrement-button', function(){
