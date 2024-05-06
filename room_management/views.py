@@ -78,7 +78,6 @@ def add_room(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
-@staff_required
 @login_required
 def get_room_type_prices(request):
     if request.method != 'GET':
