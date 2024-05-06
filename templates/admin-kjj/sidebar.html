@@ -36,6 +36,7 @@
                 </a>
             </li>
         </ul>
+        {% if request.user.is_staff %}
         <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-700">
             {% if request.user.is_staff %}
             <li>
@@ -187,7 +188,7 @@
             </li>
             {% endif %}
         </ul>
-
+        {% endif %}
     </div>
     <div class="w-full p-3 absolute bottom-0 bg-gray-800">
         <div class="flex justify-center items-center">
